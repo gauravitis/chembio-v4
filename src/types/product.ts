@@ -8,4 +8,69 @@ export interface Product {
   packSize?: string;
   category?: string;
   stockQuantity?: number;
-} 
+  manufacturer?: string;
+  tags?: string[];
+  specifications?: Record<string, string>;
+  relatedProducts?: string[]; // IDs of related products
+  rating?: number;
+  reviewCount?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ProductFilter {
+  categories?: string[];
+  manufacturers?: string[];
+  priceRange?: {
+    min: number;
+    max: number;
+  };
+  packSizes?: string[];
+  inStock?: boolean;
+  rating?: number;
+  sortBy?: 'price' | 'name' | 'rating' | 'newest';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface ProductReview {
+  id: string;
+  productId: string;
+  userId: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface WishlistItem {
+  productId: string;
+  userId: string;
+  addedAt: Date;
+}
+
+export interface RecentlyViewedItem {
+  productId: string;
+  userId: string;
+  viewedAt: Date;
+}
+
+export interface ProductRecommendation {
+  productId: string;
+  recommendedProducts: string[]; // IDs of recommended products
+  score: number; // Recommendation score/relevance
+  type: 'similar' | 'complementary' | 'frequently-bought-together';
+}
+
+// Analytics types
+export interface ProductAnalytics {
+  productId: string;
+  views: number;
+  addedToCart: number;
+  purchased: number;
+  wishlistAdds: number;
+  averageRating: number;
+  reviewCount: number;
+  conversionRate: number;
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  date: Date;
+}

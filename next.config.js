@@ -7,6 +7,21 @@ const nextConfig = {
         hostname: 'lab.honeywell.com',
         pathname: '/shop/media/catalog/product/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'shop.brand.co.in',
+        pathname: '/media/catalog/product/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.cloudinary.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        pathname: '/**',
+      }
     ],
   },
   poweredByHeader: false,
