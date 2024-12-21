@@ -1,5 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { parse } from 'csv-parse/sync';
+import fs from 'fs';
+import path from 'path';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBUW-NLA-s3PaRp5kq2zlNuNyerG_JflGA",
@@ -11,54 +14,61 @@ const firebaseConfig = {
   measurementId: "G-0DBVKC2GZN"
 };
 
-// Sample products data
-const products = [
-  {
-    "id": "270458-1L",
-    "name": "1-Methyl-2-pyrrolidinone CHROMASOLV™ Plus, for HPLC, ≥99%",
-    "description": "1-Methyl-2-pyrrolidone; N-Methyl-2-pyrrolidone; NMP",
-    "price": 10899,
-    "image": "https://lab.honeywell.com/shop/media/catalog/product/cache/ae13028c52290a7248189008ed57c9bd/8/d/8dff797f7b8151e571e80c683d5d3db2a0275e0f4d68445f4cb68187f0ee0b8c.jpeg"
-  },
-  {
-    "id": "34856-2.5L",
-    "name": "Dichloromethane CHROMASOLV™, for HPLC, ≥99.8%",
-    "description": "Methylene chloride",
-    "price": 8260,
-    "image": "https://lab.honeywell.com/shop/media/catalog/product/cache/ae13028c52290a7248189008ed57c9bd/9/7/97396f625fd0897ac7566fc410ee29722c7d98a6601fe7dd6959ba39b26e449d.jpeg"
-  }
-];
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Function to generate a unique ID for a product
+function generateUniqueProductId(product) {
+  const baseId = product.id || product.ID || product['Product ID'] || product.casNumber || product['CAS Number'];
+  const packSize = product.packSize || product['Pack Size'] || '';
+  return `${baseId}-${packSize}`.replace(/\s+/g, '-').toLowerCase();
+}
 
 async function migrateProducts() {
   console.log('Starting migration...');
   console.log('Initializing Firebase with project:', firebaseConfig.projectId);
   
   try {
+    // Read the CSV file
+    const csvPath = path.join(process.cwd(), 'products.csv');
+    const csvContent = fs.readFileSync(csvPath, { encoding: 'utf-8' });
+    
+    // Parse CSV content
+    const products = parse(csvContent, {
+      columns: true,
+      skip_empty_lines: true
+    });
+
+    console.log(`Found ${products.length} products in CSV file`);
+    
     const productsRef = collection(db, 'products');
     let migratedCount = 0;
     
     for (const product of products) {
       try {
         const productData = {
-          ...product,
+          id: generateUniqueProductId(product),
+          name: product.name || product.Name || product['Product Name'],
+          description: product.description || product.Description || '',
+          price: parseInt(product.price || product.Price || '0', 10),
+          image: product.image || product.Image || '',
+          casNumber: product.casNumber || product['CAS Number'] || '',
+          packSize: product.packSize || product['Pack Size'] || '',
+          category: product.category || product.Category || '',
           stockQuantity: 100,
           createdAt: new Date(),
           updatedAt: new Date()
         };
 
         await addDoc(productsRef, productData);
-        console.log(`✓ Migrated: ${product.name}`);
         migratedCount++;
+        console.log(`Migrated product: ${productData.name} (${productData.id})`);
       } catch (error) {
-        console.error(`Failed to migrate product ${product.name}:`, error);
+        console.error(`Error migrating product:`, error);
       }
     }
-
-    console.log(`Migration completed! Successfully migrated ${migratedCount} products.`);
-    process.exit(0);
+    
+    console.log(`Successfully migrated ${migratedCount} products`);
   } catch (error) {
     console.error('Migration failed:', error);
     process.exit(1);
@@ -71,4 +81,5 @@ process.on('unhandledRejection', (error) => {
   process.exit(1);
 });
 
-migrateProducts(); 
+// Run the migration
+migrateProducts();

@@ -50,6 +50,34 @@ export default function Home() {
                 <div className="text-gray-400">Support</div>
               </div>
             </div>
+
+            {/* Company Description */}
+            <div className="mt-24 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+              <div className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+                <div className="max-w-4xl mx-auto">
+                  <h3 className="text-2xl font-semibold text-gradient mb-6">
+                    Your Partner in Scientific Excellence
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    As industry leaders, we specialize in the import, export, and domestic supply of{' '}
+                    <span className="text-blue-300">Organic & Inorganic Chemicals</span>,{' '}
+                    <span className="text-blue-300">High Purity Solvents</span>,{' '}
+                    <span className="text-blue-300">Fine Chemicals</span>, and{' '}
+                    <span className="text-blue-300">Life Science Research Products</span>.
+                  </p>
+                  <p className="text-gray-300 leading-relaxed mt-4">
+                    Our comprehensive range includes Pharmaceutical Raw Materials, cutting-edge lab instruments, 
+                    liquid handling products, HPLC & GC columns & accessories, precision weighing balances, 
+                    spectrophotometers, glassware, plastic ware, filtration products, microbiological essentials, 
+                    water & waste water analysis products, clean room solutions, and an extensive range of safety products.
+                  </p>
+                  <p className="text-gradient font-medium mt-6">
+                    Elevate your research, development, and production endeavors with ChemBio – 
+                    Your Trusted Partner in Scientific Excellence.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -62,16 +90,40 @@ export default function Home() {
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {[
-              { name: 'Merck', description: 'Leading provider of scientific products' },
-              { name: 'SRL', description: 'Quality laboratory chemicals' },
-              { name: 'Sigma Aldrich', description: 'Research chemicals and materials' },
-              { name: 'Honeywell', description: 'Industrial chemicals and solutions' },
-              { name: 'Borosil', description: 'Premium laboratory glassware' },
-              { name: 'Thermo Fischer', description: 'Scientific instruments and supplies' }
+              { 
+                name: 'Merck', 
+                description: 'Leading provider of scientific products',
+                logo: '/partner-logos/merck.png'
+              },
+              { 
+                name: 'Sigma Aldrich', 
+                description: 'Research chemicals and materials',
+                logo: '/partner-logos/sigma-aldrich.png'
+              },
+              { 
+                name: 'Honeywell', 
+                description: 'Industrial chemicals and solutions',
+                logo: '/partner-logos/honeywell.png'
+              },
+              { 
+                name: 'SRL', 
+                description: 'Quality laboratory chemicals',
+                logo: '/partner-logos/srl.png'
+              },
+              { 
+                name: 'GENAXY', 
+                description: 'Innovative life science solutions',
+                logo: '/partner-logos/genaxy.png'
+              },
+              { 
+                name: 'BRAND SCIENTIFIC', 
+                description: 'Precision laboratory equipment',
+                logo: '/partner-logos/brand-scientific.png'
+              }
             ].map((partner, index) => (
               <div
                 key={partner.name}
-                className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 p-6 
+                className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 p-8 
                          hover:from-blue-500/20 hover:to-purple-500/20 transition-all duration-300
                          border border-white/10 backdrop-blur-sm flex flex-col items-center justify-center text-center"
                 style={{
@@ -80,14 +132,38 @@ export default function Home() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 
                               group-hover:opacity-100 transition-opacity duration-300" />
-                <h4 className="text-xl font-semibold text-white mb-2 relative z-10 
-                             group-hover:text-gradient transition-colors duration-300">
-                  {partner.name}
-                </h4>
-                <p className="text-gray-400 text-sm relative z-10 group-hover:text-gray-300 
-                             transition-colors duration-300 max-w-[200px] mx-auto">
-                  {partner.description}
-                </p>
+                
+                {/* Logo */}
+                {partner.logo ? (
+                  <>
+                    <div className="relative w-48 h-36 mb-4">
+                      <Image
+                        src={partner.logo}
+                        alt={`${partner.name} logo`}
+                        fill
+                        className="object-contain opacity-90 
+                                 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{ mixBlendMode: 'normal' }}
+                      />
+                    </div>
+                    <p className="text-gray-400 text-sm relative z-10 group-hover:text-gray-300 
+                                transition-colors duration-300 max-w-[200px] mx-auto">
+                      {partner.description}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h4 className="text-xl font-semibold text-white mb-2 relative z-10 
+                                group-hover:text-gradient transition-colors duration-300">
+                      {partner.name}
+                    </h4>
+                    <p className="text-gray-400 text-sm relative z-10 group-hover:text-gray-300 
+                                transition-colors duration-300 max-w-[200px] mx-auto">
+                      {partner.description}
+                    </p>
+                  </>
+                )}
+                
                 <div className="absolute -bottom-1 -right-1 w-20 h-20 bg-gradient-to-br 
                               from-blue-500/20 to-purple-500/20 blur-2xl rounded-full
                               opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

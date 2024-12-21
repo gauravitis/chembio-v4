@@ -34,8 +34,8 @@ export default function ProductsPage() {
         const snapshot = await getDocs(q);
         
         const fetchedProducts = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
+          ...doc.data(),
+          firestoreId: doc.id
         })) as Product[];
 
         setProducts(fetchedProducts);
@@ -66,8 +66,8 @@ export default function ProductsPage() {
       const snapshot = await getDocs(q);
 
       const newProducts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        firestoreId: doc.id
       })) as Product[];
 
       setProducts(prev => [...prev, ...newProducts]);
@@ -89,7 +89,9 @@ export default function ProductsPage() {
         product.id,
         product.name,
         product.description,
-        product.casNumber
+        product.casNumber,
+        product.packSize,
+        product.category
       ].filter((field): field is string => typeof field === 'string');
 
       return searchFields.some(field => 
@@ -100,7 +102,7 @@ export default function ProductsPage() {
 
   // Load more products when scrolling to bottom
   useEffect(() => {
-    if (inView && !loading && lastDoc) {
+    if (inView && !loading) {
       loadMoreProducts();
     }
   }, [inView]);
@@ -117,18 +119,22 @@ export default function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-gradient-custom">
-      <PageHeader 
-        title="Our Products" 
-        subtitle="Discover our comprehensive range of laboratory essentials" 
-      />
-
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-8">
+          <PageHeader 
+            title="Our Products" 
+            description="Browse our extensive catalog of high-quality chemicals and laboratory supplies."
+          />
+
+          <div className="text-center mb-8 text-gray-300 italic">
+            (Our Products Catalogue Will Be Updated Soon)
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-8 bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
             <ProductSearch onSearch={setSearchTerm} />
             <ViewToggle view={view} onViewChange={setView} />
           </div>
-          
+
           <motion.div
             variants={containerVariants}
             initial={false}
@@ -142,7 +148,7 @@ export default function ProductsPage() {
             <AnimatePresence mode="popLayout">
               {filteredProducts.map((product) => (
                 <ProductCard 
-                  key={product.id}
+                  key={product.firestoreId}
                   product={product} 
                   view={view}
                 />
@@ -154,7 +160,7 @@ export default function ProductsPage() {
           {loading && (
             <div className="flex flex-col justify-center items-center py-8 gap-3">
               <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin bg-white/20 backdrop-blur-sm shadow-lg" />
-              <p className="text-gray-600 font-medium animate-pulse">Loading products...</p>
+              <p className="text-gray-300 font-medium animate-pulse">Loading products...</p>
             </div>
           )}
 
@@ -164,9 +170,11 @@ export default function ProductsPage() {
           )}
 
           {filteredProducts.length === 0 && !loading && (
-            <p className="text-center text-gray-500 mt-8">
-              No products found matching your search criteria.
-            </p>
+            <div className="text-center p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+              <p className="text-gray-300">
+                No products found matching your search criteria.
+              </p>
+            </div>
           )}
         </div>
       </section>
