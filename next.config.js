@@ -15,6 +15,6 @@ const nextConfig = {
   reactStrictMode: true,
   // Optimize output
   output: 'standalone',
-}
+};
 
-module.exports = nextConfig
+export default nextConfig;

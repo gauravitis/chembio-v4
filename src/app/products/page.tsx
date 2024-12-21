@@ -4,15 +4,19 @@ import { PageHeader } from '@/components/ui/page-header';
 import { ProductCard } from '@/components/ui/product-card';
 import { ProductSearch } from '@/components/ui/product-search';
 import { ViewToggle } from '@/components/ui/view-toggle';
-import { products } from '@/data/products';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { db } from '@/lib/firebase';
+import { collection, query, getDocs, orderBy, limit, startAfter, DocumentData } from 'firebase/firestore';
+import { Product } from '@/data/products';
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [page, setPage] = useState(1);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastDoc, setLastDoc] = useState<DocumentData | null>(null);
   const itemsPerPage = 12;
 
   // Intersection Observer for infinite scroll
@@ -20,28 +24,82 @@ export default function ProductsPage() {
     threshold: 0,
   });
 
+  // Initial products fetch
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const productsRef = collection(db, 'products');
+        const q = query(productsRef, orderBy('name'), limit(itemsPerPage));
+        const snapshot = await getDocs(q);
+        
+        const fetchedProducts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Product[];
+
+        setProducts(fetchedProducts);
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Load more products
+  const loadMoreProducts = async () => {
+    if (!lastDoc) return;
+
+    try {
+      setLoading(true);
+      const productsRef = collection(db, 'products');
+      const q = query(
+        productsRef,
+        orderBy('name'),
+        startAfter(lastDoc),
+        limit(itemsPerPage)
+      );
+      const snapshot = await getDocs(q);
+
+      const newProducts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Product[];
+
+      setProducts(prev => [...prev, ...newProducts]);
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+    } catch (error) {
+      console.error('Error loading more products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter products based on search term
   const filteredProducts = useMemo(() => {
     if (!searchTerm) return products;
     
     const searchLower = searchTerm.toLowerCase();
-    return products.filter((product) => 
-      product.id?.toLowerCase().includes(searchLower) ||
-      product.name.toLowerCase().includes(searchLower) ||
-      product.casNumber?.toLowerCase().includes(searchLower)
-    );
-  }, [searchTerm]);
-
-  // Calculate paginated products
-  const paginatedProducts = useMemo(() => {
-    return filteredProducts.slice(0, page * itemsPerPage);
-  }, [filteredProducts, page]);
+    return products.filter((product) => {
+      const idMatch = product.id?.toLowerCase().includes(searchLower) || false;
+      const nameMatch = product.name.toLowerCase().includes(searchLower);
+      const descMatch = product.description?.toLowerCase().includes(searchLower) || false;
+      const casMatch = product.casNumber ? product.casNumber.toLowerCase().includes(searchLower) : false;
+      
+      return idMatch || nameMatch || descMatch || casMatch;
+    });
+  }, [searchTerm, products]);
 
   // Load more products when scrolling to bottom
   useEffect(() => {
-    if (inView && paginatedProducts.length < filteredProducts.length) {
-      setPage((prev) => prev + 1);
+    if (inView && !loading && lastDoc) {
+      loadMoreProducts();
     }
-  }, [inView, paginatedProducts.length, filteredProducts.length]);
+  }, [inView]);
 
   // Container variants for grid/list animation
   const containerVariants = {
@@ -78,9 +136,9 @@ export default function ProductsPage() {
             }`}
           >
             <AnimatePresence mode="popLayout">
-              {paginatedProducts.map((product, index) => (
+              {filteredProducts.map((product) => (
                 <ProductCard 
-                  key={`${product.id}-${index}`} 
+                  key={product.id}
                   product={product} 
                   view={view}
                 />
@@ -89,17 +147,19 @@ export default function ProductsPage() {
           </motion.div>
 
           {/* Loading indicator */}
-          {paginatedProducts.length < filteredProducts.length && (
-            <div
-              ref={ref}
-              className="flex flex-col justify-center items-center py-8 gap-3"
-            >
+          {loading && (
+            <div className="flex flex-col justify-center items-center py-8 gap-3">
               <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin bg-white/20 backdrop-blur-sm shadow-lg" />
-              <p className="text-gray-600 font-medium animate-pulse">Loading more products...</p>
+              <p className="text-gray-600 font-medium animate-pulse">Loading products...</p>
             </div>
           )}
 
-          {filteredProducts.length === 0 && (
+          {/* Load more trigger */}
+          {!loading && lastDoc && (
+            <div ref={ref} className="h-20" />
+          )}
+
+          {filteredProducts.length === 0 && !loading && (
             <p className="text-center text-gray-500 mt-8">
               No products found matching your search criteria.
             </p>
