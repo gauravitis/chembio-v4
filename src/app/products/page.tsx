@@ -9,7 +9,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { db } from '@/lib/firebase';
 import { collection, query, getDocs, orderBy, limit, startAfter, DocumentData } from 'firebase/firestore';
-import { Product } from '@/data/products';
+import type { Product } from '@/types/product';
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -85,12 +85,16 @@ export default function ProductsPage() {
     
     const searchLower = searchTerm.toLowerCase();
     return products.filter((product) => {
-      const idMatch = product.id?.toLowerCase().includes(searchLower) || false;
-      const nameMatch = product.name.toLowerCase().includes(searchLower);
-      const descMatch = product.description?.toLowerCase().includes(searchLower) || false;
-      const casMatch = product.casNumber ? product.casNumber.toLowerCase().includes(searchLower) : false;
-      
-      return idMatch || nameMatch || descMatch || casMatch;
+      const searchFields = [
+        product.id,
+        product.name,
+        product.description,
+        product.casNumber
+      ].filter((field): field is string => typeof field === 'string');
+
+      return searchFields.some(field => 
+        field.toLowerCase().includes(searchLower)
+      );
     });
   }, [searchTerm, products]);
 

@@ -4,10 +4,10 @@ export interface Product {
   description: string;
   price: number;
   image: string;
-  casNumber?: string;
-  packSize?: string;
-  category?: string;
-  stockQuantity?: number;
+  casNumber?: string | undefined;
+  packSize?: string | undefined;
+  category?: string | undefined;
+  stockQuantity?: number | undefined;
 }
 
 export const products: Product[] = [
