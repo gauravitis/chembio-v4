@@ -41,7 +41,7 @@ export function ProductCard({ product, view }: ProductCardProps) {
       window.location.href = '/auth/login';
       return;
     }
-    addItem(product);
+    addItem(product, 1); // Add 1 item by default when clicking the cart button
   };
 
   return (
