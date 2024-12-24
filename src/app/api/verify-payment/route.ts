@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createHmac } from 'crypto';
-import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase-admin';
+import { Timestamp } from 'firebase-admin/firestore';
 
 export async function POST(request: Request) {
   try {
@@ -29,22 +29,28 @@ export async function POST(request: Request) {
     }
 
     // Store the order in Firestore
-    const ordersRef = collection(db, 'orders');
-    await addDoc(ordersRef, {
-      userId,
+    const orderData = {
       orderId,
       paymentId,
+      signature,
       items,
       amount,
+      userId,
       status: 'completed',
-      createdAt: serverTimestamp(),
-    });
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    };
 
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error('[VERIFY_PAYMENT]', error);
+    const orderRef = await db.collection('orders').add(orderData);
+
+    return NextResponse.json({
+      success: true,
+      orderId: orderRef.id,
+    });
+  } catch (error) {
+    console.error('Error processing payment:', error);
     return NextResponse.json(
-      { error: 'Error verifying payment', details: error.message },
+      { error: 'Failed to process payment' },
       { status: 500 }
     );
   }
