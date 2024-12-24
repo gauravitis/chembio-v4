@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, ShoppingCart } from 'lucide-react';
 import { QuickView } from './quick-view';
-import { useCart } from '@/contexts/cart-context';
+import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/contexts/auth-context';
 
 interface ProductCardProps {

@@ -18,13 +18,13 @@ interface QuickViewModalProps {
 
 export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
 
   if (!product) return null;
 
   const handleAddToCart = () => {
-    addToCart(product, selectedQuantity);
+    addItem(product, selectedQuantity);
   };
 
   const handleAddToWishlist = () => {
