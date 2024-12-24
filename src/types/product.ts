@@ -3,7 +3,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  image?: string;
+  image: string;  // Making this required but it can be an empty string
   casNumber?: string;
   packSize?: string;
   category: string;

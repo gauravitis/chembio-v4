@@ -42,10 +42,14 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
           {/* Product Image */}
           <div className="relative aspect-square">
             <Image
-              src={product.image}
+              src={product.image || '/placeholder-product.png'}
               alt={product.name}
               fill
-              className="object-cover rounded-lg"
+              className="object-contain rounded-lg"
+              onError={(e: any) => {
+                e.target.src = '/placeholder-product.png';
+              }}
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
 
