@@ -1,4 +1,4 @@
-import { Grid2X2, List } from 'lucide-react';
+import { Grid2X2, List, LayoutGrid } from 'lucide-react';
 
 interface ViewToggleProps {
   view: 'grid' | 'list';
@@ -7,26 +7,26 @@ interface ViewToggleProps {
 
 export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   return (
-    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm p-1 rounded-lg">
+    <div className="flex items-center gap-2">
       <button
         onClick={() => onViewChange('grid')}
-        className={`p-2 rounded-md transition-all ${
+        className={`p-2 rounded-lg transition-all duration-300 ${
           view === 'grid'
-            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
-            : 'text-gray-600 hover:bg-white/60'
+            ? 'bg-accent-blue/20 text-accent-blue'
+            : 'text-gray-400 hover:text-accent-blue hover:bg-accent-blue/10'
         }`}
-        title="Grid View"
+        title="Grid view"
       >
-        <Grid2X2 className="w-5 h-5" />
+        <LayoutGrid className="w-5 h-5" />
       </button>
       <button
         onClick={() => onViewChange('list')}
-        className={`p-2 rounded-md transition-all ${
+        className={`p-2 rounded-lg transition-all duration-300 ${
           view === 'list'
-            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
-            : 'text-gray-600 hover:bg-white/60'
+            ? 'bg-accent-blue/20 text-accent-blue'
+            : 'text-gray-400 hover:text-accent-blue hover:bg-accent-blue/10'
         }`}
-        title="List View"
+        title="List view"
       >
         <List className="w-5 h-5" />
       </button>

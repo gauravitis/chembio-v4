@@ -1,90 +1,114 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { parse } from 'csv-parse/sync';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, getDocs, query, where, orderBy, limit, CollectionReference, Query, DocumentData } from 'firebase/firestore';
 
-// Helper function to read and parse CSV
-async function readProductsFromCSV() {
-  const csvPath = path.join(process.cwd(), 'products.csv');
-  const fileContents = await fs.readFile(csvPath, 'utf-8');
-  return parse(fileContents, {
-    columns: true,
-    skip_empty_lines: true
-  });
-}
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const products = await readProductsFromCSV();
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
+    const searchQuery = searchParams.get('q');
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const limitParam = parseInt(searchParams.get('limit') || '12');
+
+    const productsRef = collection(db, 'products');
+    let q: Query<DocumentData> = productsRef;
+    const constraints: any[] = [];
+
+    if (category) {
+      constraints.push(where('category', '==', category));
+    }
+
+    if (searchQuery) {
+      constraints.push(where('name', '>=', searchQuery));
+      constraints.push(where('name', '<=', searchQuery + '\uf8ff'));
+    }
+
+    constraints.push(orderBy(sortBy, sortOrder as 'asc' | 'desc'));
+    if (sortBy !== 'id') {
+      constraints.push(orderBy('id')); // Secondary sort for consistency
+    }
+
+    constraints.push(limit(limitParam));
+
+    if (constraints.length > 0) {
+      q = query(productsRef, ...constraints);
+    }
+
+    const snapshot = await getDocs(q);
+
+    const products = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
     return NextResponse.json(products);
   } catch (error) {
-    console.error('[PRODUCTS_GET]', error);
-    return new NextResponse('Error reading products', { status: 500 });
+    console.error('Error fetching products:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch products' },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { name, category, description, price, unit, sku, stockQuantity, imageUrl } = body;
+    const {
+      name,
+      description,
+      price,
+      image,
+      category,
+      manufacturer,
+      casNumber,
+      packSize,
+      stockQuantity = 0
+    } = await request.json();
 
     // Validate required fields with specific messages
-    const missingFields = [];
+    const missingFields: string[] = [];
     if (!name) missingFields.push('name');
     if (!category) missingFields.push('category');
     if (!description) missingFields.push('description');
     if (!price) missingFields.push('price');
-    if (!unit) missingFields.push('unit');
-    if (!sku) missingFields.push('sku');
-    if (!stockQuantity) missingFields.push('stockQuantity');
 
     if (missingFields.length > 0) {
-      return new NextResponse(
-        `Missing required fields: ${missingFields.join(', ')}`,
+      return NextResponse.json(
+        {
+          error: `Missing required fields: ${missingFields.join(', ')}`
+        },
         { status: 400 }
       );
     }
 
-    // Validate numeric fields
-    if (isNaN(parseFloat(price))) {
-      return new NextResponse('Price must be a valid number', { status: 400 });
-    }
-    if (isNaN(parseFloat(stockQuantity))) {
-      return new NextResponse('Stock quantity must be a valid number', { status: 400 });
-    }
-
-    // Read existing products
-    const products = await readProductsFromCSV();
-    
-    // Check if SKU already exists
-    if (products.some((p: any) => p.sku === sku)) {
-      return new NextResponse('SKU already exists', { status: 400 });
-    }
-
-    // Append new product to CSV
-    const newProduct = {
+    // Create product document
+    const productsRef = collection(db, 'products');
+    const product = {
       name,
-      category,
       description,
-      price: parseFloat(price),
-      unit,
-      sku,
-      stockQuantity: parseFloat(stockQuantity),
-      imageUrl: imageUrl || '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      price: Number(price),
+      image,
+      category,
+      manufacturer,
+      casNumber,
+      packSize,
+      stockQuantity: Number(stockQuantity),
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
-    const csvPath = path.join(process.cwd(), 'products.csv');
-    const csvContent = await fs.readFile(csvPath, 'utf-8');
-    const headers = csvContent.split('\n')[0];
-    
-    const newLine = Object.values(newProduct).join(',');
-    await fs.writeFile(csvPath, `${csvContent}${newLine}\n`);
+    const docRef = await addDoc(productsRef, product);
 
-    return NextResponse.json(newProduct);
+    return NextResponse.json({
+      id: docRef.id,
+      ...product
+    });
   } catch (error) {
-    console.error('[PRODUCTS_POST]', error);
-    return new NextResponse('Error creating product', { status: 500 });
+    console.error('Error creating product:', error);
+    return NextResponse.json(
+      { error: 'Failed to create product' },
+      { status: 500 }
+    );
   }
 }

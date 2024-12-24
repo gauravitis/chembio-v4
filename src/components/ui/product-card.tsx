@@ -2,7 +2,7 @@ import { Product } from '@/data/products';
 import Image from 'next/image';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, Send, ShoppingCart } from 'lucide-react';
+import { Eye, ShoppingCart } from 'lucide-react';
 import { QuickView } from './quick-view';
 import { useCart } from '@/contexts/cart-context';
 import { useAuth } from '@/contexts/auth-context';
@@ -31,31 +31,6 @@ function getCleanImageUrl(url: string) {
   return url;
 }
 
-// Animation variants
-const cardVariants = {
-  grid: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.3
-    }
-  },
-  list: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.3
-    }
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.95,
-    transition: {
-      duration: 0.2
-    }
-  }
-};
-
 export function ProductCard({ product, view }: ProductCardProps) {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const { addItem } = useCart();
@@ -63,7 +38,6 @@ export function ProductCard({ product, view }: ProductCardProps) {
 
   const handleAddToCart = () => {
     if (!user) {
-      // Show login modal or redirect to login
       window.location.href = '/auth/login';
       return;
     }
@@ -74,18 +48,16 @@ export function ProductCard({ product, view }: ProductCardProps) {
     <>
       <motion.div
         layout
-        variants={cardVariants}
-        initial="exit"
-        animate={view}
-        exit="exit"
-        whileHover={{ y: -5 }}
-        className={`group relative bg-white/90 backdrop-blur-lg rounded-xl overflow-hidden transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200/30 ${
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className={`group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-accent-blue/10 transition-all duration-300 ${
           view === 'list' ? 'grid grid-cols-1 md:grid-cols-4 gap-4' : ''
         }`}
       >
         {/* Product Image Container */}
         <div className={`relative ${view === 'list' ? 'h-48 md:h-full' : 'aspect-square'}`}>
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/5 to-accent-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <Image
             src={getCleanImageUrl(product.image)}
             alt={product.name}
@@ -98,17 +70,17 @@ export function ProductCard({ product, view }: ProductCardProps) {
           <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button
               onClick={() => setIsQuickViewOpen(true)}
-              className="p-3 rounded-full bg-white/90 hover:bg-white shadow-lg transform hover:scale-110 transition-all duration-300"
+              className="p-3 rounded-full bg-white/10 backdrop-blur-sm shadow-lg transform hover:scale-110 transition-all duration-300"
               title="Quick View"
             >
-              <Eye className="w-5 h-5 text-blue-600" />
+              <Eye className="w-5 h-5 text-accent-blue" />
             </button>
             <button
               onClick={handleAddToCart}
-              className="p-3 rounded-full bg-white/90 hover:bg-white shadow-lg transform hover:scale-110 transition-all duration-300"
+              className="p-3 rounded-full bg-white/10 backdrop-blur-sm shadow-lg transform hover:scale-110 transition-all duration-300"
               title="Add to Cart"
             >
-              <ShoppingCart className="w-5 h-5 text-purple-600" />
+              <ShoppingCart className="w-5 h-5 text-accent-purple" />
             </button>
           </div>
         </div>
@@ -118,64 +90,41 @@ export function ProductCard({ product, view }: ProductCardProps) {
           {/* Catalogue ID and Price */}
           <div className="flex justify-between items-start">
             <div className="space-y-1">
-              <span className="text-xs px-2 py-1 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full text-blue-700 font-medium">
+              <span className="text-xs px-2 py-1 bg-gradient-to-r from-accent-blue/10 to-accent-purple/10 rounded-full text-accent-blue font-medium">
                 {product.id}
               </span>
               {product.packSize && (
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-gray-400">
                   Pack Size: {product.packSize}
                 </div>
               )}
             </div>
-            <span className="text-purple-600 font-semibold">
+            <span className="text-accent-purple font-semibold">
               {formatIndianPrice(product.price)}
             </span>
           </div>
 
           {/* Product Name */}
-          <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+          <h3 className="font-medium text-gray-100 group-hover:text-accent-blue transition-colors duration-300 line-clamp-2">
             {product.name}
           </h3>
 
           {/* CAS Number and Description */}
           <div className={view === 'list' ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : ''}>
             {product.casNumber && (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-400">
                 CAS: {product.casNumber}
               </p>
             )}
             {view === 'list' && (
-              <p className="text-sm text-gray-600 line-clamp-2">
+              <p className="text-sm text-gray-300 line-clamp-2">
                 {product.description}
               </p>
             )}
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-2">
-            <button
-              onClick={handleAddToCart}
-              className={`flex-1 py-2 px-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-300 ${
-                view === 'grid' ? 'opacity-0 group-hover:opacity-100' : ''
-              }`}
-            >
-              Add to Cart
-            </button>
-            <button
-              onClick={() => {
-                window.location.href = `/contact?product=${product.id}`;
-              }}
-              className={`flex-1 py-2 px-4 border border-blue-500 text-blue-500 hover:bg-blue-50 font-medium rounded-lg transition-all duration-300 ${
-                view === 'grid' ? 'opacity-0 group-hover:opacity-100' : ''
-              }`}
-            >
-              Request Quote
-            </button>
-          </div>
         </div>
       </motion.div>
 
-      {/* Quick View Modal */}
       <QuickView
         product={product}
         isOpen={isQuickViewOpen}

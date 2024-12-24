@@ -3,10 +3,10 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  image: string;
+  image?: string;
   casNumber?: string;
   packSize?: string;
-  category?: string;
+  category: string;
   stockQuantity?: number;
   manufacturer?: string;
   tags?: string[];
@@ -14,22 +14,24 @@ export interface Product {
   relatedProducts?: string[]; // IDs of related products
   rating?: number;
   reviewCount?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ProductFilter {
-  categories?: string[];
-  manufacturers?: string[];
   priceRange?: {
     min: number;
     max: number;
   };
-  packSizes?: string[];
+  categories?: string[];
+  manufacturers?: string[];
   inStock?: boolean;
-  rating?: number;
   sortBy?: 'price' | 'name' | 'rating' | 'newest';
   sortOrder?: 'asc' | 'desc';
+  search?: string;
+  tags?: string[];
+  page?: number;
+  limit?: number;
 }
 
 export interface ProductReview {
@@ -56,8 +58,8 @@ export interface RecentlyViewedItem {
 
 export interface ProductRecommendation {
   productId: string;
-  recommendedProducts: string[]; // IDs of recommended products
-  score: number; // Recommendation score/relevance
+  recommendedProducts: string[];
+  score: number;
   type: 'similar' | 'complementary' | 'frequently-bought-together';
 }
 

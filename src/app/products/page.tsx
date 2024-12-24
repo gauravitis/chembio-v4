@@ -4,14 +4,12 @@ import { PageHeader } from '@/components/ui/page-header';
 import { ProductCard } from '@/components/ui/product-card';
 import { ProductSearch } from '@/components/ui/product-search';
 import { ViewToggle } from '@/components/ui/view-toggle';
-import { QuickViewModal } from '@/components/products/QuickViewModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { db } from '@/lib/firebase';
-import { collection, query, getDocs, orderBy, limit, startAfter, DocumentData, where } from 'firebase/firestore';
-import type { Product } from '@/types/product';
-import { useDebounce } from '@/hooks/useDebounce';
+import { collection, query, getDocs, orderBy, limit, startAfter, DocumentData } from 'firebase/firestore';
+import { Product } from '@/data/products';
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,175 +17,193 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastDoc, setLastDoc] = useState<DocumentData | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const itemsPerPage = 12;
-
-  const debouncedSearch = useDebounce(searchTerm, 500);
 
   // Intersection Observer for infinite scroll
   const { ref, inView } = useInView({
     threshold: 0,
+    rootMargin: '100px',
   });
 
-  // Build query
-  const buildQuery = () => {
-    let q = collection(db, 'products');
+  // Initial products fetch
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const productsRef = collection(db, 'products');
+        const q = query(
+          productsRef, 
+          orderBy('name'), 
+          limit(itemsPerPage * 2) // Fetch more items since we'll filter some out
+        );
+        const snapshot = await getDocs(q);
+        
+        const fetchedProducts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Product[];
 
-    if (debouncedSearch) {
-      q = query(
-        q,
-        where('name', '>=', debouncedSearch),
-        where('name', '<=', debouncedSearch + '\uf8ff'),
-        orderBy('name'),
-        orderBy('id'), // Add a secondary sort to ensure consistent ordering
-        limit(itemsPerPage)
-      );
-    } else {
-      q = query(
-        q,
-        orderBy('createdAt', 'desc'),
-        orderBy('id'), // Add a secondary sort to ensure consistent ordering
-        limit(itemsPerPage)
-      );
-    }
+        // Filter products to only include those with CAS numbers and ensure uniqueness
+        const uniqueProducts = new Map();
+        fetchedProducts
+          .filter(product => product.casNumber && product.casNumber.trim() !== '')
+          .forEach(product => {
+            if (!uniqueProducts.has(product.casNumber)) {
+              uniqueProducts.set(product.casNumber, product);
+            }
+          });
 
-    return q;
-  };
+        const validProducts = Array.from(uniqueProducts.values());
+        setProducts(validProducts);
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+        setHasMore(validProducts.length >= itemsPerPage);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Fetch products
-  const fetchProducts = async (isInitial = false) => {
+    fetchProducts();
+  }, []);
+
+  // Load more products
+  const loadMoreProducts = async () => {
+    if (!lastDoc || !hasMore || loading) return;
+
     try {
       setLoading(true);
-      let q = buildQuery();
-      
-      if (!isInitial && lastDoc) {
-        q = query(q, startAfter(lastDoc));
-      }
-
+      const productsRef = collection(db, 'products');
+      const q = query(
+        productsRef,
+        orderBy('name'),
+        startAfter(lastDoc),
+        limit(itemsPerPage * 2) // Fetch more items since we'll filter some out
+      );
       const snapshot = await getDocs(q);
+
       const newProducts = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Product[];
 
-      // Filter out any duplicate products based on id
-      if (!isInitial) {
-        const existingIds = new Set(products.map(p => p.id));
-        const uniqueNewProducts = newProducts.filter(p => !existingIds.has(p.id));
-        setProducts(prev => [...prev, ...uniqueNewProducts]);
-      } else {
-        setProducts(newProducts);
-      }
+      // Create a Map of existing products using CAS number as key
+      const existingProducts = new Map(
+        products.map(p => [p.casNumber, p])
+      );
+      
+      // Add only unique new products with CAS numbers
+      newProducts
+        .filter(product => product.casNumber && product.casNumber.trim() !== '')
+        .forEach(product => {
+          if (!existingProducts.has(product.casNumber)) {
+            existingProducts.set(product.casNumber, product);
+          }
+        });
 
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      const allUniqueProducts = Array.from(existingProducts.values());
+      
+      if (allUniqueProducts.length > products.length) {
+        setProducts(allUniqueProducts);
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+        setHasMore(snapshot.docs.length === itemsPerPage * 2); // Adjust hasMore check
+      } else {
+        setHasMore(false);
+      }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error loading more products:', error);
+      setHasMore(false);
     } finally {
       setLoading(false);
     }
   };
 
-  // Initial fetch and search changes
+  // Load more products when scrolling to bottom
   useEffect(() => {
-    fetchProducts(true);
-  }, [debouncedSearch]);
-
-  // Infinite scroll
-  useEffect(() => {
-    if (inView && !loading && lastDoc) {
-      fetchProducts();
+    if (inView && hasMore && !loading && lastDoc) {
+      loadMoreProducts();
     }
-  }, [inView]);
+  }, [inView, hasMore, loading, lastDoc]);
 
-  const handleQuickView = (product: Product) => {
-    setSelectedProduct(product);
-    setIsQuickViewOpen(true);
+  // Generate unique key for product
+  const generateProductKey = (product: Product) => {
+    return product.id; // Using just the ID since it's guaranteed to be unique
   };
 
+  // Filter products based on search term
+  const filteredProducts = useMemo(() => {
+    if (!searchTerm) return products;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return products.filter((product) => {
+      const searchFields = [
+        product.id,
+        product.name,
+        product.description,
+        product.casNumber
+      ].filter((field): field is string => typeof field === 'string');
+
+      return searchFields.some(field => 
+        field.toLowerCase().includes(searchLower)
+      );
+    });
+  }, [searchTerm, products]);
+
   return (
-    <div className="min-h-screen bg-gradient-custom py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <PageHeader
-          title="Our Products"
-          description="Browse our extensive collection of high-quality chemicals and lab equipment"
+    <main className="min-h-screen bg-gradient-custom">
+      <div className="relative">
+        <PageHeader 
+          title="Our Products" 
+          subtitle="Discover our comprehensive range of laboratory essentials" 
         />
 
-        <div className="mt-8">
-          {/* Search and View Toggle */}
-          <div className="mb-6 flex justify-between items-center">
-            <ProductSearch
-              value={searchTerm}
-              onChange={setSearchTerm}
-            />
-            <ViewToggle value={view} onChange={setView} />
-          </div>
+        <section className="py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto] gap-4 items-center bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+              <ProductSearch onSearch={setSearchTerm} />
+              <ViewToggle view={view} onViewChange={setView} />
+            </div>
 
-          {/* Products Grid/List */}
-          <AnimatePresence mode="wait">
-            {loading && products.length === 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-white/10 animate-pulse rounded-lg h-72"
+            <motion.div
+              layout
+              className={`${
+                view === 'grid'
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                  : 'flex flex-col gap-4'
+              }`}
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredProducts.map((product) => (
+                  <ProductCard 
+                    key={generateProductKey(product)}
+                    product={product} 
+                    view={view}
                   />
                 ))}
+              </AnimatePresence>
+            </motion.div>
+
+            {loading && (
+              <div className="flex justify-center items-center py-8">
+                <div className="w-8 h-8 border-4 border-accent-blue/30 border-t-accent-blue rounded-full animate-spin" />
               </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className={
-                  view === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
-                    : 'space-y-4'
-                }
-              >
-                {products.map((product) => {
-                  // Create a unique key using multiple fields
-                  const uniqueKey = `${product.id}-${product.manufacturer || ''}-${product.casNumber || ''}-${product.packSize || ''}`;
-                  return (
-                    <ProductCard
-                      key={uniqueKey}
-                      product={product}
-                      view={view}
-                      onQuickView={() => handleQuickView(product)}
-                    />
-                  );
-                })}
-              </motion.div>
             )}
-          </AnimatePresence>
 
-          {/* No Results Message */}
-          {!loading && products.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">
-                No products found. Try adjusting your search.
-              </p>
-            </div>
-          )}
+            {!loading && hasMore && (
+              <div ref={ref} className="h-20" />
+            )}
 
-          {/* Loading More Indicator */}
-          {loading && products.length > 0 && (
-            <div className="text-center py-4">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-            </div>
-          )}
-
-          {/* Infinite scroll trigger */}
-          <div ref={ref} className="h-10" />
-        </div>
-
-        {/* Quick View Modal */}
-        <QuickViewModal
-          product={selectedProduct}
-          isOpen={isQuickViewOpen}
-          onClose={() => setIsQuickViewOpen(false)}
-        />
+            {filteredProducts.length === 0 && !loading && (
+              <div className="text-center py-12 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+                <p className="text-gray-300">
+                  No products found matching your search criteria.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
