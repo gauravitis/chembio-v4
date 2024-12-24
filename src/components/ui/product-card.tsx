@@ -1,4 +1,4 @@
-import { Product } from '@/data/products';
+import { Product } from '@/types/product';
 import Image from 'next/image';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
