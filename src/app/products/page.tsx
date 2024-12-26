@@ -5,7 +5,7 @@ import { ProductCard } from '@/components/ui/product-card';
 import { ProductSearch } from '@/components/ui/product-search';
 import { ViewToggle } from '@/components/ui/view-toggle';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { db } from '@/lib/firebase';
 import { collection, query, getDocs, orderBy, limit, startAfter, DocumentData } from 'firebase/firestore';
@@ -26,6 +26,18 @@ export default function ProductsPage() {
     rootMargin: '100px',
   });
 
+  // Filter products based on search term
+  const filteredProducts = useMemo(() => {
+    if (!searchTerm) return products;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return products.filter(product => 
+      product.name.toLowerCase().includes(searchLower) ||
+      product.catalogueId.toLowerCase().includes(searchLower) ||
+      (product.casNumber && product.casNumber.toLowerCase().includes(searchLower))
+    );
+  }, [searchTerm, products]);
+
   // Initial products fetch
   useEffect(() => {
     fetchProducts();
@@ -42,117 +54,108 @@ export default function ProductsPage() {
     try {
       setLoading(true);
       const productsRef = collection(db, 'products');
-      const q = query(
-        productsRef,
-        orderBy('name'),
-        limit(itemsPerPage)
-      );
-      const snapshot = await getDocs(q);
+      const q = query(productsRef, orderBy('createdAt', 'desc'), limit(itemsPerPage));
+      const querySnapshot = await getDocs(q);
       
-      const productsData = snapshot.docs.map(doc => ({
+      if (querySnapshot.empty) {
+        setHasMore(false);
+        setLoading(false);
+        return;
+      }
+
+      const fetchedProducts = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Product[];
 
-      setProducts(productsData);
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-      setHasMore(snapshot.docs.length === itemsPerPage);
+      setProducts(fetchedProducts);
+      setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching products:', error);
-    } finally {
       setLoading(false);
     }
   };
 
   const loadMoreProducts = async () => {
-    if (!lastDoc || !hasMore || loading) return;
+    if (!lastDoc || !hasMore) return;
 
     try {
       setLoading(true);
       const productsRef = collection(db, 'products');
       const q = query(
         productsRef,
-        orderBy('name'),
+        orderBy('createdAt', 'desc'),
         startAfter(lastDoc),
         limit(itemsPerPage)
       );
-      const snapshot = await getDocs(q);
+      const querySnapshot = await getDocs(q);
 
-      const newProducts = snapshot.docs.map(doc => ({
+      if (querySnapshot.empty) {
+        setHasMore(false);
+        setLoading(false);
+        return;
+      }
+
+      const newProducts = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Product[];
 
       setProducts(prev => [...prev, ...newProducts]);
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-      setHasMore(snapshot.docs.length === itemsPerPage);
+      setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      setLoading(false);
     } catch (error) {
       console.error('Error loading more products:', error);
-    } finally {
       setLoading(false);
     }
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.casNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <main className="min-h-screen bg-gradient-custom">
-      <div className="relative">
-        <PageHeader 
-          title="Our Products" 
-          subtitle="Discover our comprehensive range of laboratory essentials" 
-        />
+    <div className="container mx-auto px-4 py-8">
+      <PageHeader
+        title="Our Products"
+        description="Browse our comprehensive range of high-quality chemicals and laboratory equipment."
+      />
 
-        <section className="py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto] gap-4 items-center bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-              <ProductSearch onSearch={setSearchTerm} />
-              <ViewToggle view={view} onViewChange={setView} />
-            </div>
-
-            <motion.div
-              layout
-              className={`${
-                view === 'grid'
-                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
-                  : 'flex flex-col gap-4'
-              }`}
-            >
-              <AnimatePresence mode="popLayout">
-                {filteredProducts.map((product) => (
-                  <ProductCard 
-                    key={product.id}
-                    product={product} 
-                    view={view}
-                  />
-                ))}
-              </AnimatePresence>
-            </motion.div>
-
-            {loading && (
-              <div className="flex justify-center items-center py-8">
-                <div className="w-8 h-8 border-4 border-accent-blue/30 border-t-accent-blue rounded-full animate-spin" />
-              </div>
-            )}
-
-            {!loading && hasMore && (
-              <div ref={ref} className="h-20" />
-            )}
-
-            {filteredProducts.length === 0 && !loading && (
-              <div className="text-center py-12 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                <p className="text-gray-300">
-                  {searchTerm ? 'No products found matching your search criteria.' : 'No products available yet.'}
-                </p>
-              </div>
-            )}
-          </div>
-        </section>
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+        <ProductSearch value={searchTerm} onChange={setSearchTerm} />
+        <ViewToggle view={view} onChange={setView} />
       </div>
-    </main>
+
+      <AnimatePresence mode="wait">
+        <div className={`grid gap-6 ${view === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
+          {filteredProducts.map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2, delay: index * 0.05 }}
+            >
+              <ProductCard product={product} view={view} />
+            </motion.div>
+          ))}
+        </div>
+      </AnimatePresence>
+
+      {loading && (
+        <div className="flex justify-center items-center mt-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent-blue"></div>
+        </div>
+      )}
+
+      {!loading && hasMore && (
+        <div ref={ref} className="h-20" />
+      )}
+
+      {!hasMore && filteredProducts.length > 0 && (
+        <p className="text-center text-gray-500 mt-8">No more products to load.</p>
+      )}
+
+      {!loading && filteredProducts.length === 0 && (
+        <p className="text-center text-gray-500 mt-8">No products found.</p>
+      )}
+    </div>
   );
 }
