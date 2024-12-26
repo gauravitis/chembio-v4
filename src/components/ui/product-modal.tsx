@@ -21,6 +21,14 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
   const { addItem } = useCart();
   const { user } = useAuth();
 
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
   const handleRequestQuote = () => {
     router.push('/contact?product=' + encodeURIComponent(product.name));
     onClose();
@@ -93,6 +101,16 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
                       {product.make && (
                         <p className="text-gray-400 mt-1">Brand: {product.make}</p>
                       )}
+                      <div className="mt-2">
+                        <p className="text-2xl font-bold text-accent-blue">
+                          {formatPrice(product.price)}
+                        </p>
+                        {product.mrp && product.mrp > product.price && (
+                          <p className="text-sm text-gray-400 line-through">
+                            {formatPrice(product.mrp)}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -148,7 +166,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
                       </button>
                       <button
                         onClick={handleAddToCart}
-                        className="flex-1 px-6 py-3 bg-accent-purple text-white rounded-lg hover:bg-accent-purple/90 transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/90 transition-colors flex items-center justify-center gap-2"
                       >
                         <ShoppingCart className="w-5 h-5" />
                         Add to Cart

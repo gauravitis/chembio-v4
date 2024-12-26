@@ -21,6 +21,14 @@ export function ProductCard({ product, view = 'grid' }: ProductCardProps) {
     router.push('/contact?product=' + encodeURIComponent(product.name));
   };
 
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
   if (view === 'list') {
     return (
       <>
@@ -67,10 +75,17 @@ export function ProductCard({ product, view = 'grid' }: ProductCardProps) {
                   <p className="text-gray-200">{product.packSize}</p>
                 </div>
               </div>
-              {product.description && (
-                <p className="text-gray-300 text-sm line-clamp-2">{product.description}</p>
-              )}
-              <div className="flex gap-4 pt-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-xl font-semibold text-accent-blue">
+                    {formatPrice(product.price)}
+                  </p>
+                  {product.mrp && product.mrp > product.price && (
+                    <p className="text-sm text-gray-400 line-through">
+                      {formatPrice(product.mrp)}
+                    </p>
+                  )}
+                </div>
                 <button
                   onClick={handleRequestQuote}
                   className="px-6 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/90 transition-colors"
@@ -123,23 +138,25 @@ export function ProductCard({ product, view = 'grid' }: ProductCardProps) {
                 <p className="text-gray-200">{product.casNumber}</p>
               </div>
             )}
-            {product.hsnCode && (
-              <div>
-                <p className="text-gray-400">HSN Code</p>
-                <p className="text-gray-200">{product.hsnCode}</p>
-              </div>
-            )}
-            <div>
-              <p className="text-gray-400">Pack Size</p>
-              <p className="text-gray-200">{product.packSize}</p>
-            </div>
           </div>
-          <button
-            onClick={handleRequestQuote}
-            className="w-full px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/90 transition-colors"
-          >
-            Request Quote
-          </button>
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-semibold text-accent-blue">
+                {formatPrice(product.price)}
+              </p>
+              {product.mrp && product.mrp > product.price && (
+                <p className="text-sm text-gray-400 line-through">
+                  {formatPrice(product.mrp)}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={handleRequestQuote}
+              className="px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/90 transition-colors"
+            >
+              Request Quote
+            </button>
+          </div>
         </div>
       </motion.div>
       <ProductModal
