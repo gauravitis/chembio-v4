@@ -1,26 +1,26 @@
 export interface Product {
   id: string;
   name: string;
-  description?: string;
-  casNumber?: string;
+  description?: string | undefined;
+  casNumber?: string | undefined;
   catalogueId: string;
   category: string;
   packSize: string;
-  hsnCode?: string;
+  hsnCode?: string | undefined;
   make: string;
   price: number;
-  mrp?: number;
-  purity?: string;
+  mrp?: number | undefined;
+  purity?: string | undefined;
   image: string;
-  createdAt: string;
-  updatedAt: string;
-  stockQuantity?: number;
-  manufacturer?: string;
-  tags?: string[];
-  specifications?: Record<string, string>;
-  relatedProducts?: string[]; // IDs of related products
-  rating?: number;
-  reviewCount?: number;
+  createdAt?: string | undefined;
+  updatedAt?: string | undefined;
+  stockQuantity?: number | undefined;
+  manufacturer?: string | undefined;
+  tags?: string[] | undefined;
+  specifications?: Record<string, string> | undefined;
+  relatedProducts?: string[] | undefined; // IDs of related products
+  rating?: number | undefined;
+  reviewCount?: number | undefined;
 }
 
 export interface ProductFilter {

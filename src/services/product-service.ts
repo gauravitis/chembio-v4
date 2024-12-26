@@ -70,10 +70,10 @@ export class ProductService {
       name: product.name?.trim(),
       casNumber: casNumber ? 
         (casNumber.toLowerCase() === 'mixture' ? 'Mixture' : casNumber.toUpperCase()) 
-        : null,
+        : undefined,
       catalogueId: product.catalogueId?.trim().toUpperCase(),
       packSize: product.packSize?.trim(),
-      hsnCode: product.hsnCode?.trim() || null,
+      hsnCode: product.hsnCode?.trim() || undefined,
       make: product.make?.trim(),
       category: product.category?.trim(),
       price: Number(product.price) || 0,
