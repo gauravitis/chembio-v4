@@ -5,7 +5,7 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import Molecule from '@/components/Molecule';
 import { useEffect, useRef } from 'react';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
-import { cn } from '@/lib/utils';
+import { cn, throttle } from '@/lib/utils';
 import { TestimonialCard } from '@/components/ui/testimonial-card';
 import { NewsletterForm } from '@/components/ui/newsletter-form';
 
