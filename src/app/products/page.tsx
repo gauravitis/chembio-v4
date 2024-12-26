@@ -112,50 +112,60 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <PageHeader
-        title="Our Products"
-        description="Browse our comprehensive range of high-quality chemicals and laboratory equipment."
-      />
+    <div className="min-h-screen bg-gradient-custom">
+      <div className="relative">
+        <PageHeader
+          title="Our Products"
+          description="Browse our comprehensive range of high-quality chemicals and laboratory equipment."
+        />
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-        <ProductSearch value={searchTerm} onChange={setSearchTerm} />
-        <ViewToggle view={view} onChange={setView} />
+        <section className="py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto] gap-4 items-center bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+              <ProductSearch value={searchTerm} onChange={setSearchTerm} />
+              <ViewToggle view={view} onChange={setView} />
+            </div>
+
+            <AnimatePresence mode="wait">
+              <div className={`grid gap-6 ${view === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
+                {filteredProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
+                  >
+                    <ProductCard product={product} view={view} />
+                  </motion.div>
+                ))}
+              </div>
+            </AnimatePresence>
+
+            {loading && (
+              <div className="flex justify-center items-center py-8">
+                <div className="w-8 h-8 border-4 border-accent-blue/30 border-t-accent-blue rounded-full animate-spin" />
+              </div>
+            )}
+
+            {!loading && hasMore && (
+              <div ref={ref} className="h-20" />
+            )}
+
+            {!hasMore && filteredProducts.length > 0 && (
+              <p className="text-center text-gray-400 py-4">No more products to load.</p>
+            )}
+
+            {!loading && filteredProducts.length === 0 && (
+              <div className="text-center py-12 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+                <p className="text-gray-300">
+                  {searchTerm ? 'No products found matching your search criteria.' : 'No products available yet.'}
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
-
-      <AnimatePresence mode="wait">
-        <div className={`grid gap-6 ${view === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
-          {filteredProducts.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.2, delay: index * 0.05 }}
-            >
-              <ProductCard product={product} view={view} />
-            </motion.div>
-          ))}
-        </div>
-      </AnimatePresence>
-
-      {loading && (
-        <div className="flex justify-center items-center mt-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent-blue"></div>
-        </div>
-      )}
-
-      {!loading && hasMore && (
-        <div ref={ref} className="h-20" />
-      )}
-
-      {!hasMore && filteredProducts.length > 0 && (
-        <p className="text-center text-gray-500 mt-8">No more products to load.</p>
-      )}
-
-      {!loading && filteredProducts.length === 0 && (
-        <p className="text-center text-gray-500 mt-8">No products found.</p>
-      )}
     </div>
   );
 }
