@@ -61,7 +61,7 @@ export default function TeamPage() {
         expertise: 'B2B Sales, Market Strategy, Client Relations',
         experience: '10+ years in chemical and pharmaceutical sales',
         email: 'pramod.chembio@gmail.com',
-        phone: '+91-9876543212'
+        phone: '+91-9310721900'
       },
       {
         name: 'Akash',
@@ -69,7 +69,7 @@ export default function TeamPage() {
         expertise: 'Digital Marketing, Product Promotion',
         experience: '8+ years in chemical industry marketing',
         email: 'akash.chembio@gmail.com',
-        phone: '+91-9876543218'
+        phone: '+91-8826420679'
       },
       {
         name: 'Ayush Singh',
@@ -77,7 +77,7 @@ export default function TeamPage() {
         expertise: 'Sales Strategy, Team Management',
         experience: '9+ years in pharmaceutical sales',
         email: 'ayush.chembio@gmail.com',
-        phone: '+91-9876543219'
+        phone: '+91-9304440470'
       }
     ],
     'Customer Support': [
@@ -87,7 +87,7 @@ export default function TeamPage() {
         expertise: 'Technical Support, Customer Service, Product Knowledge',
         experience: '8+ years in technical support',
         email: 'rajendra.chembio@gmail.com',
-        phone: '+91-9876543213'
+        phone: '+91-9999817050'
       },
       {
         name: 'Rohit',
@@ -95,7 +95,7 @@ export default function TeamPage() {
         expertise: 'Product Support, Customer Relations',
         experience: '6+ years in customer support',
         email: 'rohit.chembio@gmail.com',
-        phone: '+91-9876543220'
+        phone: '+91-7503821546'
       },
       {
         name: 'Rajeev Yadav',
@@ -103,7 +103,7 @@ export default function TeamPage() {
         expertise: 'Customer Care, Technical Assistance',
         experience: '5+ years in technical customer service',
         email: 'rajeev.chembio@gmail.com',
-        phone: '+91-9876543221'
+        phone: '+91-9711585551'
       }
     ],
     'Logistics & Supply Chain': [
@@ -113,7 +113,7 @@ export default function TeamPage() {
         expertise: 'Supply Chain Management, Distribution',
         experience: '10+ years in chemical logistics',
         email: 'rajeev.chembio@gmail.com',
-        phone: '+91-9876543222'
+        phone: '+91-9711585551'
       },
       {
         name: 'Vikas Prajapati',
@@ -121,15 +121,15 @@ export default function TeamPage() {
         expertise: 'Inventory Management, Process Optimization',
         experience: '7+ years in supply chain operations',
         email: 'vikas.chembio@gmail.com',
-        phone: '+91-9876543223'
+        phone: '+91-9313204913'
       },
       {
-        name: 'Chandu',
+        name: 'Chandar Gupt',
         role: 'Warehouse Supervisor',
         expertise: 'Warehouse Management, Shipping Operations',
         experience: '8+ years in chemical storage and handling',
         email: 'chandu.chembio@gmail.com',
-        phone: '+91-9876543224'
+        phone: '+91-9911253516'
       }
     ]
   };
