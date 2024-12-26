@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Molecule from '@/components/Molecule';
+import { useEffect, useRef } from 'react';
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
+import { cn } from '@/lib/utils';
 
 interface ServiceCardProps {
   icon: string;
@@ -11,8 +14,16 @@ interface ServiceCardProps {
 }
 
 function ServiceCard({ icon, title, description }: ServiceCardProps) {
+  const { elementRef, isVisible } = useIntersectionObserver();
+  
   return (
-    <div className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+    <div 
+      ref={elementRef as React.RefObject<HTMLDivElement>}
+      className={cn(
+        "group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element section-fade-in",
+        isVisible && "visible"
+      )}
+    >
       <div className="h-12 relative mb-4">
         <Image
           src={icon}
@@ -35,8 +46,16 @@ interface CategoryCardProps {
 }
 
 function CategoryCard({ icon, title, description, items }: CategoryCardProps) {
+  const { elementRef, isVisible } = useIntersectionObserver();
+  
   return (
-    <div className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+    <div 
+      ref={elementRef as React.RefObject<HTMLDivElement>}
+      className={cn(
+        "group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element section-fade-in",
+        isVisible && "visible"
+      )}
+    >
       <div className="h-12 relative mb-4">
         <Image
           src={icon}
@@ -68,25 +87,58 @@ function CategoryCard({ icon, title, description, items }: CategoryCardProps) {
 }
 
 export default function Home() {
+  const parallaxRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const { elementRef: partnersRef, isVisible: partnersVisible } = useIntersectionObserver();
+  const { elementRef: servicesRef, isVisible: servicesVisible } = useIntersectionObserver();
+  const { elementRef: categoriesRef, isVisible: categoriesVisible } = useIntersectionObserver();
+
+  useEffect(() => {
+    const handleParallax = (e: MouseEvent) => {
+      if (!parallaxRef.current) return;
+
+      const elements = parallaxRef.current.getElementsByClassName('parallax-element');
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      const moveX = (mouseX - windowWidth / 2) / windowWidth;
+      const moveY = (mouseY - windowHeight / 2) / windowHeight;
+
+      Array.from(elements).forEach((element) => {
+        const speed = element.hasAttribute('data-speed') 
+          ? Number(element.getAttribute('data-speed')) 
+          : 2;
+        
+        const el = element as HTMLElement;
+        el.style.transform = `translate3d(${moveX * speed}px, ${moveY * speed}px, 0)`;
+      });
+    };
+
+    document.addEventListener('mousemove', handleParallax);
+    return () => document.removeEventListener('mousemove', handleParallax);
+  }, []);
+
   return (
-    <main className="min-h-screen bg-gradient-custom">
+    <main className="min-h-screen bg-gradient-custom" ref={parallaxRef}>
       <Molecule />
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-grid min-h-screen px-4">
-          <div className="hero-glow" />
+          <div className="hero-glow parallax-element" data-speed="4" />
           <div className="max-w-7xl mx-auto text-center hero-content py-32">
             <div className="space-y-8 animate-fade-in">
-              <h1 className="text-5xl md:text-7xl font-bold text-white animate-float">
+              <h1 className="text-5xl md:text-7xl font-bold text-white animate-float parallax-element" data-speed="2">
                 Chembio Lifesciences
               </h1>
-              <h2 className="text-3xl md:text-5xl font-semibold text-[#B490F5]">
+              <h2 className="text-3xl md:text-5xl font-semibold text-[#B490F5] parallax-element" data-speed="1.5">
                 Empowering Research
               </h2>
-              <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto">
+              <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto parallax-element" data-speed="1">
                 Your Trusted Vendor for High-Quality Chemicals and Lab Equipment
               </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-6 pt-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-6 pt-4 parallax-element" data-speed="0.5">
                 <Link href="/products" className="btn-primary">
                   Explore Products
                 </Link>
@@ -97,28 +149,32 @@ export default function Home() {
             </div>
             
             {/* Stats */}
-            <div className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="stats-card">
+            <div 
+              ref={statsRef}
+              className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 animate-fade-in" 
+              style={{ animationDelay: '0.3s' }}
+            >
+              <div className="stats-card parallax-element" data-speed="1.5">
                 <div className="text-3xl md:text-4xl font-bold text-[#7BA4F4] mb-2">1000+</div>
                 <div className="text-gray-400">Products</div>
               </div>
-              <div className="stats-card">
+              <div className="stats-card parallax-element" data-speed="1">
                 <div className="text-3xl md:text-4xl font-bold text-[#7BA4F4] mb-2">10+</div>
                 <div className="text-gray-400">Brands</div>
               </div>
-              <div className="stats-card">
+              <div className="stats-card parallax-element" data-speed="1.5">
                 <div className="text-3xl md:text-4xl font-bold text-[#7BA4F4] mb-2">100+</div>
                 <div className="text-gray-400">Customers</div>
               </div>
-              <div className="stats-card">
+              <div className="stats-card parallax-element" data-speed="1">
                 <div className="text-3xl md:text-4xl font-bold text-[#7BA4F4] mb-2">24/7</div>
                 <div className="text-gray-400">Support</div>
               </div>
             </div>
 
             {/* Company Description */}
-            <div className="mt-24 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              <div className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+            <div className="mt-24 animate-fade-in parallax-wrapper" style={{ animationDelay: '0.6s' }}>
+              <div className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 parallax-element" data-speed="0.5">
                 <div className="max-w-4xl mx-auto">
                   <h3 className="text-2xl font-semibold text-[#B490F5] mb-6">
                     Your Partner in Scientific Excellence
@@ -144,7 +200,13 @@ export default function Home() {
       </section>
 
       {/* Trusted Partners */}
-      <section className="py-16 px-4 animate-fade-in">
+      <section 
+        ref={partnersRef as React.RefObject<HTMLElement>}
+        className={cn(
+          "py-16 px-4 section-fade-in",
+          partnersVisible && "visible"
+        )}
+      >
         <div className="max-w-7xl mx-auto">
           <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-8">
             Trusted Partners
@@ -184,14 +246,15 @@ export default function Home() {
             ].map((partner) => (
               <div 
                 key={partner.name}
-                className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1"
+                className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element"
+                data-speed="1"
               >
                 <div className="h-16 relative mb-6">
                   <Image
                     src={partner.logo}
                     alt={`${partner.name} logo`}
                     fill
-                    className="object-contain filter brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity"
+                    className="partner-logo"
                   />
                 </div>
                 <h4 className="text-xl font-semibold text-white mb-3">{partner.name}</h4>
@@ -206,7 +269,13 @@ export default function Home() {
       </section>
 
       {/* Our Services */}
-      <section className="py-16 px-4 bg-white/5 backdrop-blur-sm animate-fade-in">
+      <section 
+        ref={servicesRef as React.RefObject<HTMLElement>}
+        className={cn(
+          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in",
+          servicesVisible && "visible"
+        )}
+      >
         <div className="max-w-7xl mx-auto">
           <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
             Our Services
@@ -240,7 +309,13 @@ export default function Home() {
       </section>
 
       {/* Product Categories */}
-      <section className="py-16 px-4 animate-fade-in">
+      <section 
+        ref={categoriesRef as React.RefObject<HTMLElement>}
+        className={cn(
+          "py-16 px-4 section-fade-in",
+          categoriesVisible && "visible"
+        )}
+      >
         <div className="max-w-7xl mx-auto">
           <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
             Product Categories
