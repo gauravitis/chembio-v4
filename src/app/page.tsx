@@ -6,6 +6,8 @@ import Molecule from '@/components/Molecule';
 import { useEffect, useRef } from 'react';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 import { cn } from '@/lib/utils';
+import { TestimonialCard } from '@/components/ui/testimonial-card';
+import { NewsletterForm } from '@/components/ui/newsletter-form';
 
 interface ServiceCardProps {
   icon: string;
@@ -92,6 +94,9 @@ export default function Home() {
   const { elementRef: partnersRef, isVisible: partnersVisible } = useIntersectionObserver();
   const { elementRef: servicesRef, isVisible: servicesVisible } = useIntersectionObserver();
   const { elementRef: categoriesRef, isVisible: categoriesVisible } = useIntersectionObserver();
+  const { elementRef: whyUsRef, isVisible: whyUsVisible } = useIntersectionObserver();
+  const { elementRef: testimonialsRef, isVisible: testimonialsVisible } = useIntersectionObserver();
+  const { elementRef: certificationsRef, isVisible: certificationsVisible } = useIntersectionObserver();
 
   useEffect(() => {
     const handleParallax = (e: MouseEvent) => {
@@ -369,6 +374,190 @@ export default function Home() {
               ]}
             />
           </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section 
+        ref={whyUsRef as React.RefObject<HTMLElement>}
+        className={cn(
+          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in",
+          whyUsVisible && "visible"
+        )}
+      >
+        <div className="max-w-7xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
+            Why Choose Us
+          </h3>
+          <p className="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+            Your trusted partner in scientific excellence, delivering quality and reliability
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {[
+              {
+                icon: "/icons/quality.svg",
+                title: "Quality Assurance",
+                description: "All products undergo rigorous quality control to meet international standards"
+              },
+              {
+                icon: "/icons/support.svg",
+                title: "Expert Support",
+                description: "Dedicated technical support team to assist with product selection and usage"
+              },
+              {
+                icon: "/icons/delivery.svg",
+                title: "Fast Delivery",
+                description: "Efficient logistics network ensuring timely delivery across India"
+              },
+              {
+                icon: "/icons/competitive.svg",
+                title: "Competitive Pricing",
+                description: "Best-in-class products at competitive market rates"
+              },
+              {
+                icon: "/icons/inventory.svg",
+                title: "Wide Inventory",
+                description: "Extensive range of products from leading global manufacturers"
+              },
+              {
+                icon: "/icons/custom.svg",
+                title: "Custom Solutions",
+                description: "Tailored solutions to meet your specific research requirements"
+              }
+            ].map((feature) => (
+              <div 
+                key={feature.title}
+                className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element"
+                data-speed="1"
+              >
+                <div className="h-12 relative mb-4">
+                  <Image
+                    src={feature.icon}
+                    alt={feature.title}
+                    fill
+                    className="object-contain filter brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity"
+                  />
+                </div>
+                <h4 className="text-lg font-semibold text-white mb-3 group-hover:text-gradient transition-colors">
+                  {feature.title}
+                </h4>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Customer Testimonials */}
+      <section 
+        ref={testimonialsRef as React.RefObject<HTMLElement>}
+        className={cn(
+          "py-16 px-4 section-fade-in",
+          testimonialsVisible && "visible"
+        )}
+      >
+        <div className="max-w-7xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
+            What Our Customers Say
+          </h3>
+          <p className="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+            Hear from our valued customers about their experience with Chembio Lifesciences
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <TestimonialCard
+              name="Dr. Rajesh Kumar"
+              role="Head of Research"
+              company="National Research Institute"
+              image="/testimonials/researcher-1.jpg"
+              testimonial="Chembio Lifesciences has been instrumental in our research success. Their high-quality reagents and prompt technical support have significantly enhanced our laboratory operations."
+            />
+            <TestimonialCard
+              name="Dr. Priya Sharma"
+              role="Lab Director"
+              company="Premier Medical College"
+              image="/testimonials/researcher-2.jpg"
+              testimonial="The wide range of products and competitive pricing make Chembio our go-to supplier. Their commitment to quality and customer service is exceptional."
+            />
+            <TestimonialCard
+              name="Dr. Amit Patel"
+              role="Principal Scientist"
+              company="Biotech Research Center"
+              image="/testimonials/researcher-3.jpg"
+              testimonial="We appreciate the consistent quality and reliability of Chembio's products. Their technical team's expertise has been invaluable in our research projects."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Certifications & Accreditations */}
+      <section 
+        ref={certificationsRef as React.RefObject<HTMLElement>}
+        className={cn(
+          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in",
+          certificationsVisible && "visible"
+        )}
+      >
+        <div className="max-w-7xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
+            Our Certifications
+          </h3>
+          <p className="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+            Committed to maintaining the highest standards of quality and compliance
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {[
+              {
+                name: "ISO 9001:2015",
+                logo: "/certifications/iso-9001.png",
+                description: "Quality Management System"
+              },
+              {
+                name: "ISO 14001:2015",
+                logo: "/certifications/iso-14001.png",
+                description: "Environmental Management"
+              },
+              {
+                name: "GMP Certified",
+                logo: "/certifications/gmp.png",
+                description: "Good Manufacturing Practices"
+              },
+              {
+                name: "NABL Accredited",
+                logo: "/certifications/nabl.png",
+                description: "Testing Laboratory"
+              }
+            ].map((cert) => (
+              <div 
+                key={cert.name}
+                className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element text-center"
+                data-speed="1"
+              >
+                <div className="h-20 relative mb-4">
+                  <Image
+                    src={cert.logo}
+                    alt={cert.name}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <h4 className="text-lg font-semibold text-white mb-2">
+                  {cert.name}
+                </h4>
+                <p className="text-gray-400 text-sm">
+                  {cert.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Subscription */}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <NewsletterForm />
         </div>
       </section>
     </main>
