@@ -223,51 +223,43 @@ export default function Home() {
             {[
               { 
                 name: 'Merck', 
-                description: 'Leading provider of scientific products and high-quality chemicals for research and development.',
                 logo: '/partner-logos/merck.png'
               },
               { 
                 name: 'Sigma Aldrich', 
-                description: 'Global leader in providing research chemicals, biochemicals and related products.',
                 logo: '/partner-logos/sigma-aldrich.png'
               },
               { 
                 name: 'Honeywell', 
-                description: 'Renowned supplier of industrial chemicals and research-grade materials.',
                 logo: '/partner-logos/honeywell.png'
               },
               { 
                 name: 'SRL', 
-                description: 'Premier manufacturer of laboratory chemicals and analytical reagents.',
                 logo: '/partner-logos/srl.png'
               },
               { 
                 name: 'GENAXY', 
-                description: 'Innovative provider of life science research products and lab equipment.',
                 logo: '/partner-logos/genaxy.png'
               },
               { 
                 name: 'BRAND', 
-                description: 'Specialist in precision laboratory equipment and liquid handling products.',
-                logo: '/partner-logos/brand.png'
+                logo: '/partner-logos/brand-scientific.png'
               }
             ].map((partner) => (
               <div 
                 key={partner.name}
-                className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element"
+                className="group relative isolate p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element flex items-center justify-center"
                 data-speed="1"
               >
-                <div className="h-16 relative mb-6">
+                <div className="h-20 relative flex items-center justify-center">
                   <OptimizedImage
                     src={partner.logo}
                     alt={`${partner.name} logo`}
-                    fill
-                    quality={90}
-                    className="partner-logo"
+                    width={180}
+                    height={80}
+                    className="w-auto h-full object-contain opacity-90 group-hover:opacity-100 transition-opacity mix-blend-normal"
                   />
                 </div>
-                <h4 className="text-xl font-semibold text-white mb-3">{partner.name}</h4>
-                <p className="text-gray-400 text-sm leading-relaxed">{partner.description}</p>
               </div>
             ))}
           </div>
