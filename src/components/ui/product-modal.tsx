@@ -125,10 +125,17 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
                       </div>
                     )}
 
-                    {product.specifications && (
+                    {product.specifications && Object.keys(product.specifications).length > 0 && (
                       <div>
-                        <p className="text-sm text-gray-400">Specifications</p>
-                        <p className="text-gray-200 mt-1">{product.specifications}</p>
+                        <p className="text-sm text-gray-400 mb-2">Specifications</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {Object.entries(product.specifications).map(([key, value]) => (
+                            <div key={key}>
+                              <p className="text-sm text-gray-400">{key}</p>
+                              <p className="text-gray-200">{value}</p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
 
