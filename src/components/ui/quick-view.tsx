@@ -1,7 +1,10 @@
-import { Product } from '@/data/products';
+import { Product } from '@/types/product';
 import Image from 'next/image';
-import { X } from 'lucide-react';
+import { X, ShoppingCart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '@/contexts/cart-context';
+import { useAuth } from '@/contexts/auth-context';
+import { toast } from 'react-hot-toast';
 
 interface QuickViewProps {
   product: Product;
@@ -10,6 +13,23 @@ interface QuickViewProps {
 }
 
 export function QuickView({ product, isOpen, onClose }: QuickViewProps) {
+  const { addItem } = useCart();
+  const { user } = useAuth();
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      window.location.href = '/auth/login';
+      return;
+    }
+    try {
+      await addItem(product, 1);
+      onClose();
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast.error('Failed to add item to cart');
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -51,6 +71,9 @@ export function QuickView({ product, isOpen, onClose }: QuickViewProps) {
                     fill
                     className="object-contain p-4"
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    onError={(e: any) => {
+                      e.target.src = '/placeholder-product.png';
+                    }}
                   />
                 </div>
 
@@ -58,9 +81,11 @@ export function QuickView({ product, isOpen, onClose }: QuickViewProps) {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                        {product.id}
-                      </span>
+                      {product.catalogueId && (
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                          Catalogue ID: {product.catalogueId}
+                        </span>
+                      )}
                       {product.casNumber && (
                         <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
                           CAS: {product.casNumber}
@@ -82,24 +107,34 @@ export function QuickView({ product, isOpen, onClose }: QuickViewProps) {
                     </div>
 
                     <div className="space-y-2">
-                      <h4 className="font-medium text-gray-700">Key Features:</h4>
-                      <ul className="list-disc list-inside text-gray-600 space-y-1">
-                        <li>High purity standards</li>
-                        <li>Quality tested</li>
-                        <li>Fast shipping</li>
-                      </ul>
+                      <button
+                        onClick={handleAddToCart}
+                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                        Add to Cart
+                      </button>
                     </div>
-                  </div>
 
-                  <div className="pt-4">
-                    <button
-                      onClick={() => {
-                        window.location.href = `/contact?product=${product.id}`;
-                      }}
-                      className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-300"
-                    >
-                      Request Quote
-                    </button>
+                    {/* Additional Details */}
+                    <div className="space-y-2 border-t pt-4">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Category:</span>
+                        <span className="text-gray-900">{product.category}</span>
+                      </div>
+                      {product.packSize && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Pack Size:</span>
+                          <span className="text-gray-900">{product.packSize}</span>
+                        </div>
+                      )}
+                      {product.purity && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Purity:</span>
+                          <span className="text-gray-900">{product.purity}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

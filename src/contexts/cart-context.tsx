@@ -1,10 +1,10 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuth } from './auth-context';
 import { db } from '@/lib/firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { Product } from '@/data/products';
+import { doc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
+import { Product } from '@/types/product';
 import { toast } from 'react-hot-toast';
 
 interface CartItem extends Product {
@@ -29,87 +29,161 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Calculate total
   const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  // Sync with Firestore when user is logged in
+  // Load cart data
   useEffect(() => {
-    const loadCart = async () => {
-      if (user) {
+    let unsubscribe: () => void;
+
+    if (user) {
+      const cartRef = doc(db, 'carts', user.uid);
+      
+      // Set up real-time listener
+      unsubscribe = onSnapshot(cartRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const cartData = docSnap.data();
+          if (Array.isArray(cartData.items)) {
+            setItems(cartData.items);
+          }
+        } else {
+          // Initialize empty cart if it doesn't exist
+          setDoc(cartRef, { items: [] }, { merge: true });
+          setItems([]);
+        }
+      }, (error) => {
+        console.error('Error loading cart:', error);
+        toast.error('Failed to load cart');
+      });
+    } else {
+      setItems([]); // Clear cart when user logs out
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user]);
+
+  // Save cart to Firestore
+  const saveCart = useCallback(async (newItems: CartItem[]) => {
+    if (user) {
+      try {
+        const cartRef = doc(db, 'carts', user.uid);
+        await setDoc(cartRef, { items: newItems }, { merge: true });
+      } catch (error) {
+        console.error('Error saving cart:', error);
+        toast.error('Failed to save cart');
+        // Revert the local state if save fails
         const cartRef = doc(db, 'carts', user.uid);
         const cartDoc = await getDoc(cartRef);
         if (cartDoc.exists()) {
           setItems(cartDoc.data().items || []);
         }
       }
-    };
-    loadCart();
+    }
   }, [user]);
 
-  // Save cart to Firestore whenever it changes
-  useEffect(() => {
-    const saveCart = async () => {
-      if (user) {
-        const cartRef = doc(db, 'carts', user.uid);
-        await setDoc(cartRef, { items }, { merge: true });
-      }
-    };
-    if (items.length > 0) {
-      saveCart();
+  const addItem = useCallback(async (product: Product, quantity: number = 1) => {
+    if (!user) {
+      window.location.href = '/auth/login';
+      return;
     }
-  }, [items, user]);
 
-  const addItem = (product: Product, quantity: number = 1) => {
-    setItems(currentItems => {
-      const existingItem = currentItems.find(item => item.id === product.id);
-      let newItems;
-      
-      if (existingItem) {
-        newItems = currentItems.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-        toast.success(`Updated quantity of ${product.name}`);
+    try {
+      const newItems = [...items];
+      const existingItemIndex = newItems.findIndex(item => item.id === product.id);
+
+      if (existingItemIndex !== -1) {
+        // Update existing item
+        newItems[existingItemIndex] = {
+          ...newItems[existingItemIndex],
+          quantity: newItems[existingItemIndex].quantity + quantity
+        };
       } else {
-        newItems = [...currentItems, { ...product, quantity }];
-        toast.success(`Added ${product.name} to cart`);
+        // Add new item
+        newItems.push({ ...product, quantity });
       }
+
+      // Update local state first
+      setItems(newItems);
       
-      return newItems;
-    });
-  };
+      // Then save to Firestore
+      await saveCart(newItems);
+      
+      toast.success(existingItemIndex !== -1
+        ? `Updated quantity of ${product.name}`
+        : `Added ${product.name} to cart`
+      );
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+      toast.error('Failed to add item to cart');
+    }
+  }, [items, user, saveCart]);
 
-  const removeItem = (productId: string) => {
-    setItems(currentItems => {
-      const item = currentItems.find(item => item.id === productId);
-      if (item) {
-        toast.success(`Removed ${item.name} from cart`);
+  const removeItem = useCallback(async (productId: string) => {
+    try {
+      const itemToRemove = items.find(item => item.id === productId);
+      const newItems = items.filter(item => item.id !== productId);
+      
+      // Update local state first
+      setItems(newItems);
+      
+      // Then save to Firestore
+      await saveCart(newItems);
+      
+      if (itemToRemove) {
+        toast.success(`Removed ${itemToRemove.name} from cart`);
       }
-      return currentItems.filter(item => item.id !== productId);
-    });
-  };
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+      toast.error('Failed to remove item from cart');
+    }
+  }, [items, saveCart]);
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = useCallback(async (productId: string, quantity: number) => {
     if (quantity < 1) return;
-    setItems(currentItems =>
-      currentItems.map(item =>
+    
+    try {
+      const newItems = items.map(item =>
         item.id === productId ? { ...item, quantity } : item
-      )
-    );
-  };
+      );
+      
+      // Update local state first
+      setItems(newItems);
+      
+      // Then save to Firestore
+      await saveCart(newItems);
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      toast.error('Failed to update quantity');
+    }
+  }, [items, saveCart]);
 
-  const clearCart = () => {
-    setItems([]);
-    toast.success('Cart cleared');
+  const clearCart = useCallback(async () => {
+    try {
+      // Update local state first
+      setItems([]);
+      
+      // Then save to Firestore
+      await saveCart([]);
+      
+      toast.success('Cart cleared');
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      toast.error('Failed to clear cart');
+    }
+  }, [saveCart]);
+
+  const value = {
+    items,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    total
   };
 
   return (
-    <CartContext.Provider value={{
-      items,
-      addItem,
-      removeItem,
-      updateQuantity,
-      clearCart,
-      total,
-    }}>
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

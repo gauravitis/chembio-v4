@@ -5,11 +5,11 @@ import { ProductCard } from '@/components/ui/product-card';
 import { ProductSearch } from '@/components/ui/product-search';
 import { ViewToggle } from '@/components/ui/view-toggle';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { db } from '@/lib/firebase';
 import { collection, query, getDocs, orderBy, limit, startAfter, DocumentData } from 'firebase/firestore';
-import { Product } from '@/data/products';
+import { Product } from '@/types/product';
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,47 +28,42 @@ export default function ProductsPage() {
 
   // Initial products fetch
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const productsRef = collection(db, 'products');
-        const q = query(
-          productsRef, 
-          orderBy('name'), 
-          limit(itemsPerPage * 2) // Fetch more items since we'll filter some out
-        );
-        const snapshot = await getDocs(q);
-        
-        const fetchedProducts = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Product[];
-
-        // Filter products to only include those with CAS numbers and ensure uniqueness
-        const uniqueProducts = new Map();
-        fetchedProducts
-          .filter(product => product.casNumber && product.casNumber.trim() !== '')
-          .forEach(product => {
-            if (!uniqueProducts.has(product.casNumber)) {
-              uniqueProducts.set(product.casNumber, product);
-            }
-          });
-
-        const validProducts = Array.from(uniqueProducts.values());
-        setProducts(validProducts);
-        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-        setHasMore(validProducts.length >= itemsPerPage);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProducts();
   }, []);
 
-  // Load more products
+  // Load more when scrolling
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      loadMoreProducts();
+    }
+  }, [inView]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const productsRef = collection(db, 'products');
+      const q = query(
+        productsRef,
+        orderBy('name'),
+        limit(itemsPerPage)
+      );
+      const snapshot = await getDocs(q);
+      
+      const productsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Product[];
+
+      setProducts(productsData);
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      setHasMore(snapshot.docs.length === itemsPerPage);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const loadMoreProducts = async () => {
     if (!lastDoc || !hasMore || loading) return;
 
@@ -79,7 +74,7 @@ export default function ProductsPage() {
         productsRef,
         orderBy('name'),
         startAfter(lastDoc),
-        limit(itemsPerPage * 2) // Fetch more items since we'll filter some out
+        limit(itemsPerPage)
       );
       const snapshot = await getDocs(q);
 
@@ -88,67 +83,21 @@ export default function ProductsPage() {
         ...doc.data()
       })) as Product[];
 
-      // Create a Map of existing products using CAS number as key
-      const existingProducts = new Map(
-        products.map(p => [p.casNumber, p])
-      );
-      
-      // Add only unique new products with CAS numbers
-      newProducts
-        .filter(product => product.casNumber && product.casNumber.trim() !== '')
-        .forEach(product => {
-          if (!existingProducts.has(product.casNumber)) {
-            existingProducts.set(product.casNumber, product);
-          }
-        });
-
-      const allUniqueProducts = Array.from(existingProducts.values());
-      
-      if (allUniqueProducts.length > products.length) {
-        setProducts(allUniqueProducts);
-        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-        setHasMore(snapshot.docs.length === itemsPerPage * 2); // Adjust hasMore check
-      } else {
-        setHasMore(false);
-      }
+      setProducts(prev => [...prev, ...newProducts]);
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      setHasMore(snapshot.docs.length === itemsPerPage);
     } catch (error) {
       console.error('Error loading more products:', error);
-      setHasMore(false);
     } finally {
       setLoading(false);
     }
   };
 
-  // Load more products when scrolling to bottom
-  useEffect(() => {
-    if (inView && hasMore && !loading && lastDoc) {
-      loadMoreProducts();
-    }
-  }, [inView, hasMore, loading, lastDoc]);
-
-  // Generate unique key for product
-  const generateProductKey = (product: Product) => {
-    return product.id; // Using just the ID since it's guaranteed to be unique
-  };
-
-  // Filter products based on search term
-  const filteredProducts = useMemo(() => {
-    if (!searchTerm) return products;
-    
-    const searchLower = searchTerm.toLowerCase();
-    return products.filter((product) => {
-      const searchFields = [
-        product.id,
-        product.name,
-        product.description,
-        product.casNumber
-      ].filter((field): field is string => typeof field === 'string');
-
-      return searchFields.some(field => 
-        field.toLowerCase().includes(searchLower)
-      );
-    });
-  }, [searchTerm, products]);
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.casNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <main className="min-h-screen bg-gradient-custom">
@@ -176,7 +125,7 @@ export default function ProductsPage() {
               <AnimatePresence mode="popLayout">
                 {filteredProducts.map((product) => (
                   <ProductCard 
-                    key={generateProductKey(product)}
+                    key={product.id}
                     product={product} 
                     view={view}
                   />
@@ -197,7 +146,7 @@ export default function ProductsPage() {
             {filteredProducts.length === 0 && !loading && (
               <div className="text-center py-12 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
                 <p className="text-gray-300">
-                  No products found matching your search criteria.
+                  {searchTerm ? 'No products found matching your search criteria.' : 'No products available yet.'}
                 </p>
               </div>
             )}
