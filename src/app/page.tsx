@@ -8,6 +8,7 @@ import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 import { cn, throttle } from '@/lib/utils';
 import { TestimonialCard } from '@/components/ui/testimonial-card';
 import { NewsletterForm } from '@/components/ui/newsletter-form';
+import { Footer } from '@/components/ui/footer';
 
 interface ServiceCardProps {
   icon: string;
@@ -96,7 +97,6 @@ export default function Home() {
   const { elementRef: categoriesRef, isVisible: categoriesVisible } = useIntersectionObserver();
   const { elementRef: whyUsRef, isVisible: whyUsVisible } = useIntersectionObserver();
   const { elementRef: testimonialsRef, isVisible: testimonialsVisible } = useIntersectionObserver();
-  const { elementRef: certificationsRef, isVisible: certificationsVisible } = useIntersectionObserver();
 
   useEffect(() => {
     const handleParallax = (e: MouseEvent) => {
@@ -495,76 +495,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Certifications & Accreditations */}
-      <section 
-        ref={certificationsRef as React.RefObject<HTMLElement>}
-        className={cn(
-          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in will-change-transform",
-          certificationsVisible && "visible"
-        )}
-      >
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
-            Our Certifications
-          </h3>
-          <p className="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
-            Committed to maintaining the highest standards of quality and compliance
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {[
-              {
-                name: "ISO 9001:2015",
-                logo: "/certifications/iso-9001.png",
-                description: "Quality Management System"
-              },
-              {
-                name: "ISO 14001:2015",
-                logo: "/certifications/iso-14001.png",
-                description: "Environmental Management"
-              },
-              {
-                name: "GMP Certified",
-                logo: "/certifications/gmp.png",
-                description: "Good Manufacturing Practices"
-              },
-              {
-                name: "NABL Accredited",
-                logo: "/certifications/nabl.png",
-                description: "Testing Laboratory"
-              }
-            ].map((cert) => (
-              <div 
-                key={cert.name}
-                className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element text-center"
-                data-speed="1"
-              >
-                <div className="h-20 relative mb-4">
-                  <OptimizedImage
-                    src={cert.logo}
-                    alt={cert.name}
-                    fill
-                    quality={90}
-                    className="object-contain"
-                  />
-                </div>
-                <h4 className="text-lg font-semibold text-white mb-2">
-                  {cert.name}
-                </h4>
-                <p className="text-gray-400 text-sm">
-                  {cert.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Newsletter Subscription */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <NewsletterForm />
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }
