@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import Molecule from '@/components/Molecule';
 import { useEffect, useRef } from 'react';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
@@ -22,12 +22,12 @@ function ServiceCard({ icon, title, description }: ServiceCardProps) {
     <div 
       ref={elementRef as React.RefObject<HTMLDivElement>}
       className={cn(
-        "group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element section-fade-in",
+        "group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element section-fade-in will-change-transform",
         isVisible && "visible"
       )}
     >
       <div className="h-12 relative mb-4">
-        <Image
+        <OptimizedImage
           src={icon}
           alt={title}
           fill
@@ -54,12 +54,12 @@ function CategoryCard({ icon, title, description, items }: CategoryCardProps) {
     <div 
       ref={elementRef as React.RefObject<HTMLDivElement>}
       className={cn(
-        "group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element section-fade-in",
+        "group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element section-fade-in will-change-transform",
         isVisible && "visible"
       )}
     >
       <div className="h-12 relative mb-4">
-        <Image
+        <OptimizedImage
           src={icon}
           alt={title}
           fill
@@ -100,7 +100,7 @@ export default function Home() {
 
   useEffect(() => {
     const handleParallax = (e: MouseEvent) => {
-      if (!parallaxRef.current) return;
+      if (!parallaxRef.current || window.innerWidth < 768) return; // Disable parallax on mobile
 
       const elements = parallaxRef.current.getElementsByClassName('parallax-element');
       const mouseX = e.clientX;
@@ -111,22 +111,25 @@ export default function Home() {
       const moveX = (mouseX - windowWidth / 2) / windowWidth;
       const moveY = (mouseY - windowHeight / 2) / windowHeight;
 
-      Array.from(elements).forEach((element) => {
-        const speed = element.hasAttribute('data-speed') 
-          ? Number(element.getAttribute('data-speed')) 
-          : 2;
-        
-        const el = element as HTMLElement;
-        el.style.transform = `translate3d(${moveX * speed}px, ${moveY * speed}px, 0)`;
+      requestAnimationFrame(() => {
+        Array.from(elements).forEach((element) => {
+          const speed = element.hasAttribute('data-speed') 
+            ? Number(element.getAttribute('data-speed')) 
+            : 2;
+          
+          const el = element as HTMLElement;
+          el.style.transform = `translate3d(${moveX * speed}px, ${moveY * speed}px, 0)`;
+        });
       });
     };
 
-    document.addEventListener('mousemove', handleParallax);
-    return () => document.removeEventListener('mousemove', handleParallax);
+    const throttledParallax = throttle(handleParallax, 16); // ~60fps
+    document.addEventListener('mousemove', throttledParallax);
+    return () => document.removeEventListener('mousemove', throttledParallax);
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-custom" ref={parallaxRef}>
+    <main className="min-h-screen bg-gradient-custom will-change-transform" ref={parallaxRef}>
       <Molecule />
       {/* Hero Section */}
       <section className="hero-section">
@@ -156,7 +159,7 @@ export default function Home() {
             {/* Stats */}
             <div 
               ref={statsRef}
-              className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 animate-fade-in" 
+              className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 animate-fade-in will-change-transform" 
               style={{ animationDelay: '0.3s' }}
             >
               <div className="stats-card parallax-element" data-speed="1.5">
@@ -178,7 +181,7 @@ export default function Home() {
             </div>
 
             {/* Company Description */}
-            <div className="mt-24 animate-fade-in parallax-wrapper" style={{ animationDelay: '0.6s' }}>
+            <div className="mt-24 animate-fade-in parallax-wrapper will-change-transform" style={{ animationDelay: '0.6s' }}>
               <div className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 parallax-element" data-speed="0.5">
                 <div className="max-w-4xl mx-auto">
                   <h3 className="text-2xl font-semibold text-[#B490F5] mb-6">
@@ -208,7 +211,7 @@ export default function Home() {
       <section 
         ref={partnersRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 section-fade-in",
+          "py-16 px-4 section-fade-in will-change-transform",
           partnersVisible && "visible"
         )}
       >
@@ -255,10 +258,11 @@ export default function Home() {
                 data-speed="1"
               >
                 <div className="h-16 relative mb-6">
-                  <Image
+                  <OptimizedImage
                     src={partner.logo}
                     alt={`${partner.name} logo`}
                     fill
+                    quality={90}
                     className="partner-logo"
                   />
                 </div>
@@ -277,7 +281,7 @@ export default function Home() {
       <section 
         ref={servicesRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in",
+          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in will-change-transform",
           servicesVisible && "visible"
         )}
       >
@@ -317,7 +321,7 @@ export default function Home() {
       <section 
         ref={categoriesRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 section-fade-in",
+          "py-16 px-4 section-fade-in will-change-transform",
           categoriesVisible && "visible"
         )}
       >
@@ -381,7 +385,7 @@ export default function Home() {
       <section 
         ref={whyUsRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in",
+          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in will-change-transform",
           whyUsVisible && "visible"
         )}
       >
@@ -431,7 +435,7 @@ export default function Home() {
                 data-speed="1"
               >
                 <div className="h-12 relative mb-4">
-                  <Image
+                  <OptimizedImage
                     src={feature.icon}
                     alt={feature.title}
                     fill
@@ -454,7 +458,7 @@ export default function Home() {
       <section 
         ref={testimonialsRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 section-fade-in",
+          "py-16 px-4 section-fade-in will-change-transform",
           testimonialsVisible && "visible"
         )}
       >
@@ -495,7 +499,7 @@ export default function Home() {
       <section 
         ref={certificationsRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in",
+          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in will-change-transform",
           certificationsVisible && "visible"
         )}
       >
@@ -535,10 +539,11 @@ export default function Home() {
                 data-speed="1"
               >
                 <div className="h-20 relative mb-4">
-                  <Image
+                  <OptimizedImage
                     src={cert.logo}
                     alt={cert.name}
                     fill
+                    quality={90}
                     className="object-contain"
                   />
                 </div>
