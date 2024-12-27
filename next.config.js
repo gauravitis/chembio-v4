@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['lab.honeywell.com', 'www.sigmaaldrich.com'],
+    domains: [
+      'lab.honeywell.com',
+      'www.sigmaaldrich.com',
+      'www.himedialabs.com',
+      'firebasestorage.googleapis.com'
+    ],
   },
   experimental: {
     serverActions: true,

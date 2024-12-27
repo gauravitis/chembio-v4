@@ -4,6 +4,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { ProductCard } from '@/components/ui/product-card';
 import { ProductSearch } from '@/components/ui/product-search';
 import { ViewToggle } from '@/components/ui/view-toggle';
+import { UpdateBanner } from '@/components/ui/update-banner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -116,8 +117,10 @@ export default function ProductsPage() {
       <div className="relative">
         <PageHeader
           title="Our Products"
-          description="Browse our comprehensive range of high-quality chemicals and laboratory equipment."
+          subtitle="Browse our extensive collection of high-quality chemicals and laboratory equipment"
         />
+
+        <UpdateBanner />
 
         <section className="py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto space-y-8">

@@ -207,68 +207,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trusted Partners */}
-      <section 
-        ref={partnersRef as React.RefObject<HTMLElement>}
-        className={cn(
-          "py-16 px-4 section-fade-in will-change-transform",
-          partnersVisible && "visible"
-        )}
-      >
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-8">
-            Trusted Partners
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              { 
-                name: 'Merck', 
-                logo: '/partner-logos/merck.png'
-              },
-              { 
-                name: 'Sigma Aldrich', 
-                logo: '/partner-logos/sigma-aldrich.png'
-              },
-              { 
-                name: 'Honeywell', 
-                logo: '/partner-logos/honeywell.png'
-              },
-              { 
-                name: 'SRL', 
-                logo: '/partner-logos/srl.png'
-              },
-              { 
-                name: 'GENAXY', 
-                logo: '/partner-logos/genaxy.png'
-              },
-              { 
-                name: 'BRAND', 
-                logo: '/partner-logos/brand-scientific.png'
-              }
-            ].map((partner) => (
-              <div 
-                key={partner.name}
-                className="group relative isolate p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element flex items-center justify-center"
-                data-speed="1"
-              >
-                <div className="h-20 relative flex items-center justify-center">
-                  <OptimizedImage
-                    src={partner.logo}
-                    alt={`${partner.name} logo`}
-                    width={180}
-                    height={80}
-                    className="w-auto h-full object-contain opacity-90 group-hover:opacity-100 transition-opacity mix-blend-normal"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-gray-400 mt-12 max-w-2xl mx-auto">
-            We collaborate with industry-leading manufacturers and suppliers to ensure our customers receive the highest quality products and solutions for their research needs.
-          </p>
-        </div>
-      </section>
-
       {/* Our Services */}
       <section 
         ref={servicesRef as React.RefObject<HTMLElement>}
@@ -403,27 +341,27 @@ export default function Home() {
               {
                 icon: "/icons/delivery.svg",
                 title: "Fast Delivery",
-                description: "Efficient logistics network ensuring timely delivery across India"
+                description: "Efficient logistics network ensuring timely delivery of your orders"
               },
               {
                 icon: "/icons/competitive.svg",
                 title: "Competitive Pricing",
-                description: "Best-in-class products at competitive market rates"
+                description: "Best market rates without compromising on product quality"
               },
               {
                 icon: "/icons/inventory.svg",
-                title: "Wide Inventory",
-                description: "Extensive range of products from leading global manufacturers"
+                title: "Wide Selection",
+                description: "Extensive product range to meet diverse research requirements"
               },
               {
-                icon: "/icons/custom.svg",
-                title: "Custom Solutions",
-                description: "Tailored solutions to meet your specific research requirements"
+                icon: "/icons/certification.svg",
+                title: "Certified Products",
+                description: "Products comply with international quality standards and certifications"
               }
             ].map((feature) => (
               <div 
                 key={feature.title}
-                className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element"
+                className="group relative p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element"
                 data-speed="1"
               >
                 <div className="h-12 relative mb-4">
@@ -443,6 +381,68 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Trusted Partners */}
+      <section 
+        ref={partnersRef as React.RefObject<HTMLElement>}
+        className={cn(
+          "py-16 px-4 section-fade-in will-change-transform",
+          partnersVisible && "visible"
+        )}
+      >
+        <div className="max-w-7xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-8">
+            Trusted Partners
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[
+              { 
+                name: 'Merck', 
+                logo: '/partner-logos/merck.png'
+              },
+              { 
+                name: 'Sigma Aldrich', 
+                logo: '/partner-logos/sigma-aldrich.png'
+              },
+              { 
+                name: 'Honeywell', 
+                logo: '/partner-logos/honeywell.png'
+              },
+              { 
+                name: 'SRL', 
+                logo: '/partner-logos/srl.png'
+              },
+              { 
+                name: 'GENAXY', 
+                logo: '/partner-logos/genaxy.png'
+              },
+              { 
+                name: 'BRAND', 
+                logo: '/partner-logos/brand-scientific.png'
+              }
+            ].map((partner) => (
+              <div 
+                key={partner.name}
+                className="group relative isolate p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 parallax-element flex items-center justify-center"
+                data-speed="1"
+              >
+                <div className="h-20 relative flex items-center justify-center">
+                  <OptimizedImage
+                    src={partner.logo}
+                    alt={`${partner.name} logo`}
+                    width={180}
+                    height={80}
+                    className="w-auto h-full object-contain opacity-90 group-hover:opacity-100 transition-opacity mix-blend-normal"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-gray-400 mt-12 max-w-2xl mx-auto">
+            We collaborate with industry-leading manufacturers and suppliers to ensure our customers receive the highest quality products and solutions for their research needs.
+          </p>
         </div>
       </section>
 

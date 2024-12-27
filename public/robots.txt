@@ -1,0 +1,10 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://chembiolifesciences.com/sitemap.xml
+
+# Disallow admin and auth pages
+Disallow: /admin
+Disallow: /auth
