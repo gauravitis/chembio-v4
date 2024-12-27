@@ -7,8 +7,8 @@ export default function TermsOfService() {
   return (
     <main className="min-h-screen bg-gradient-custom">
       <PageHeader 
-        title="Terms of Service" 
-        subtitle="Last updated: January 2024" 
+        title="Terms and Conditions" 
+        subtitle="Last updated on Dec 19 2024" 
       />
 
       <section className="py-16 px-4">
@@ -20,73 +20,42 @@ export default function TermsOfService() {
             className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-8"
           >
             <div className="prose prose-lg">
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">1. Acceptance of Terms</h2>
               <p className="text-gray-600 mb-8">
-                By accessing and using this website, you accept and agree to be bound by the terms and 
-                provisions of this agreement. If you do not agree to abide by these terms, please do not 
-                use this website.
+                <a href="https://merchant.razorpay.com/policy/PH8FRvVfs0s4lT/terms" className="text-blue-600 hover:text-blue-800 underline">
+                  View on Razorpay
+                </a>
               </p>
 
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">2. Products and Services</h2>
               <p className="text-gray-600 mb-8">
-                <ul className="list-disc pl-6 mt-2 space-y-2">
-                  <li>All products are subject to availability</li>
-                  <li>Prices are subject to change without notice</li>
-                  <li>Product specifications may vary</li>
-                  <li>We reserve the right to limit quantities</li>
-                </ul>
+                For the purpose of these Terms and Conditions, The term "we", "us", "our" used anywhere on this page shall mean CHEMBIO LIFESCIENCES PRIVATE LIMITED, whose registered/operational office is L-10, HIMALAYA LEGEND, NYAY KHAND-1, INDIRAPURAM, GHAZIABAD,UP Ghaziabad UTTAR PRADESH 201014. "you", "your", "user", "visitor" shall mean any natural or legal person who is visiting our website and/or agreed to purchase from us.
               </p>
 
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">3. Ordering and Payment</h2>
+              <h2 className="text-2xl font-semibold mb-6 text-gray-800">Terms of Use</h2>
               <p className="text-gray-600 mb-8">
-                <ul className="list-disc pl-6 mt-2 space-y-2">
-                  <li>Orders are subject to acceptance and confirmation</li>
-                  <li>Payment must be received prior to shipment</li>
-                  <li>We accept major credit cards and bank transfers</li>
-                  <li>All prices are in Indian Rupees unless otherwise stated</li>
-                </ul>
+                Your use of the website and/or purchase from us are governed by following Terms and Conditions:
               </p>
 
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">4. Shipping and Delivery</h2>
-              <p className="text-gray-600 mb-8">
-                <ul className="list-disc pl-6 mt-2 space-y-2">
-                  <li>Delivery times are estimates only</li>
-                  <li>Shipping costs are calculated at checkout</li>
-                  <li>Risk of loss passes upon delivery</li>
-                  <li>International shipping may be subject to customs duties</li>
-                </ul>
-              </p>
-
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">5. Returns and Refunds</h2>
-              <p className="text-gray-600 mb-8">
-                <ul className="list-disc pl-6 mt-2 space-y-2">
-                  <li>Returns must be authorized within 7 days of receipt</li>
-                  <li>Products must be unused and in original packaging</li>
-                  <li>Refunds will be processed within 14 business days</li>
-                  <li>Shipping costs are non-refundable</li>
-                </ul>
-              </p>
-
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">6. Intellectual Property</h2>
-              <p className="text-gray-600 mb-8">
-                All content on this website, including text, graphics, logos, and images, is the property 
-                of Chembio Lifesciences and is protected by copyright laws.
-              </p>
-
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">7. Limitation of Liability</h2>
-              <p className="text-gray-600 mb-8">
-                Chembio Lifesciences shall not be liable for any direct, indirect, incidental, special, 
-                or consequential damages arising from the use of our products or services.
-              </p>
-
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">8. Contact Information</h2>
-              <p className="text-gray-600">
-                For questions about these Terms of Service, please contact us at:
-                <br />
-                Email: contact.chembio@gmail.com
-                <br />
-                Phone: +91 120 1234567
-              </p>
+              <ul className="list-disc pl-6 mt-2 space-y-4 text-gray-600">
+                <li>The content of the pages of this website is subject to change without notice.</li>
+                
+                <li>Neither we nor any third parties provide any warranty or guarantee as to the accuracy, timeliness, performance, completeness or suitability of the information and materials found or offered on this website for any particular purpose. You acknowledge that such information and materials may contain inaccuracies or errors and we expressly exclude liability for any such inaccuracies or errors to the fullest extent permitted by law.</li>
+                
+                <li>Your use of any information or materials on our website and/or product pages is entirely at your own risk, for which we shall not be liable. It shall be your own responsibility to ensure that any products, services or information available through our website and/or product pages meet your specific requirements.</li>
+                
+                <li>Our website contains material which is owned by or licensed to us. This material includes, but are not limited to, the design, layout, look, appearance and graphics. Reproduction is prohibited other than in accordance with the copyright notice, which forms part of these terms and conditions.</li>
+                
+                <li>All trademarks reproduced in our website which are not the property of, or licensed to, the operator are acknowledged on the website.</li>
+                
+                <li>Unauthorized use of information provided by us shall give rise to a claim for damages and/or be a criminal offense.</li>
+                
+                <li>From time to time our website may also include links to other websites. These links are provided for your convenience to provide further information.</li>
+                
+                <li>You may not create a link to our website from another website or document without CHEMBIO LIFESCIENCES PRIVATE LIMITED's prior written consent.</li>
+                
+                <li>Any dispute arising out of use of our website and/or purchase with us and/or any engagement with us is subject to the laws of India.</li>
+                
+                <li>We, shall be under no liability whatsoever in respect of any loss or damage arising directly or indirectly out of the decline of authorization for any Transaction, on Account of the Cardholder having exceeded the preset limit mutually agreed by us with our acquiring bank from time to time.</li>
+              </ul>
             </div>
           </motion.div>
         </div>
