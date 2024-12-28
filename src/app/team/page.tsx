@@ -15,6 +15,7 @@ interface TeamMember {
   email: string;
   phone: string;
   expertise: string;
+  image?: string;
 }
 
 interface DepartmentMembers {
@@ -59,9 +60,10 @@ export default function TeamPage() {
         name: 'Pramod Shukla',
         role: 'Business Development Manager',
         expertise: 'B2B Sales, Market Strategy, Client Relations, Proteomics & Genomics Research Workflows, Hands On Elisa, Blots & Electrophoresis',
-        experience: '5+ years in Diagnostic Laboratory Hands On Workflows, 2+ years in NABL 15189:17025 accrediationm as a Quality Manager, 10+ Years in Sales & Marketing for Lifescience research related consumbales & equipment',
+        experience: '5+ years in Diagnostic Laboratory Hands On Workflows, 2+ years in NABL 15189:17025 accrediationm as a Quality Manager, 10+ Years in Sales & Marketing',
         email: 'pramod.chembio@gmail.com',
-        phone: '+91-8929800812'
+        phone: '+91-8929800812',
+        image: '/images/team/Pramod-Shukla.jpeg'
       },
       {
         name: 'Akash',
@@ -353,21 +355,34 @@ export default function TeamPage() {
                 {/* Avatar */}
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full animate-spin-slow opacity-70" />
-                  <div className="relative rounded-full bg-gradient-to-br from-gray-800 to-gray-900 w-24 h-24 flex items-center justify-center border border-gray-700/50">
-                    <svg
-                      className="w-12 h-12 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  {selectedMember.image ? (
+                    <div className="relative w-24 h-24">
+                      <Image
+                        src={selectedMember.image}
+                        alt={selectedMember.name}
+                        fill
+                        className="object-cover rounded-full border border-gray-700/50"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
-                    </svg>
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="relative rounded-full bg-gradient-to-br from-gray-800 to-gray-900 w-24 h-24 flex items-center justify-center border border-gray-700/50">
+                      <svg
+                        className="w-12 h-12 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                    </div>
+                  )}
                 </div>
 
                 {/* Info */}
@@ -431,21 +446,33 @@ export default function TeamPage() {
                     {/* Avatar with animated gradient */}
                     <div className="relative">
                       <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full animate-spin-slow opacity-0 group-hover:opacity-70 transition-opacity duration-500" />
-                      <div className="relative rounded-full bg-gradient-to-br from-gray-800 to-gray-900 w-16 h-16 flex items-center justify-center border border-gray-700/50 group-hover:border-gray-600/50 transition-colors duration-500">
-                        <svg
-                          className="w-8 h-8 text-gray-400 group-hover:text-blue-400/60 transition-colors duration-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      {member.image ? (
+                        <div className="relative w-16 h-16">
+                          <Image
+                            src={member.image}
+                            alt={member.name}
+                            fill
+                            className="object-cover rounded-full"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
-                        </svg>
-                      </div>
+                        </div>
+                      ) : (
+                        <div className="relative rounded-full bg-gradient-to-br from-gray-800 to-gray-900 w-16 h-16 flex items-center justify-center border border-gray-700/50 group-hover:border-gray-600/50 transition-colors duration-500">
+                          <svg
+                            className="w-8 h-8 text-gray-400 group-hover:text-blue-400/60 transition-colors duration-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                          </svg>
+                        </div>
+                      )}
                     </div>
 
                     {/* Content */}
