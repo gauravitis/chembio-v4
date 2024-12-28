@@ -57,11 +57,11 @@ export default function TeamPage() {
     'Sales & Marketing': [
       {
         name: 'Pramod Shukla',
-        role: 'Sales Manager',
-        expertise: 'B2B Sales, Market Strategy, Client Relations',
-        experience: '10+ years in chemical and pharmaceutical sales',
+        role: 'Business Development Manager',
+        expertise: 'B2B Sales, Market Strategy, Client Relations, Proteomics & Genomics Research Workflows, Hands On Elisa, Blots & Electrophoresis',
+        experience: '5+ years in Diagnostic Laboratory Hands On Workflows, 2+ years in NABL 15189:17025 accrediationm as a Quality Manager, 10+ Years in Sales & Marketing for Lifescience research related consumbales & equipment',
         email: 'pramod.chembio@gmail.com',
-        phone: '+91-9310721900'
+        phone: '+91-8929800812'
       },
       {
         name: 'Akash',
