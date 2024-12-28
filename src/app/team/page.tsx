@@ -66,6 +66,22 @@ export default function TeamPage() {
         image: '/images/team/Pramod-Shukla.jpeg'
       },
       {
+        name: 'Rahul Kushwaha',
+        role: 'Sales & Marketing Manager',
+        expertise: 'B2B Sales, Market Strategy, Client Relations',
+        experience: '5+ years in Sales & Marketing',
+        email: 'rahul.chembio@gmail.com',
+        phone: '+91-XXXXXXXXXX'
+      },
+      {
+        name: 'Narenar Sharma',
+        role: 'Sales & Marketing Manager',
+        expertise: 'B2B Sales, Market Strategy, Client Relations',
+        experience: '10+ years in Sales & Marketing',
+        email: 'narenar.chembio@gmail.com',
+        phone: '+91-XXXXXXXXXX'
+      },
+      {
         name: 'Akash',
         role: 'Marketing Manager',
         expertise: 'Digital Marketing, Product Promotion',
@@ -140,7 +156,7 @@ export default function TeamPage() {
     {
       name: 'Sales & Marketing',
       description: 'Building strong relationships and market presence',
-      members: 3
+      members: 5
     },
     {
       name: 'Customer Support',
@@ -220,7 +236,7 @@ export default function TeamPage() {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
-                            strokeWidth="1"
+                            strokeWidth="1.5"
                           >
                             <path
                               strokeLinecap="round"
