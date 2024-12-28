@@ -60,7 +60,7 @@ export default function TeamPage() {
         name: 'Pramod Shukla',
         role: 'Business Development Manager',
         expertise: 'B2B Sales, Market Strategy, Client Relations, Proteomics & Genomics Research Workflows, Hands On Elisa, Blots & Electrophoresis',
-        experience: '5+ years in Diagnostic Laboratory Hands On Workflows, 2+ years in NABL 15189:17025 accrediationm as a Quality Manager, 10+ Years in Sales & Marketing',
+        experience: '10+ Years in Sales & Marketing,5+ years in Diagnostic Laboratory Hands On Workflows, 2+ years in NABL 15189:17025 accrediationm as a Quality Manager',
         email: 'pramod.chembio@gmail.com',
         phone: '+91-8929800812',
         image: '/images/team/Pramod-Shukla.jpeg'
