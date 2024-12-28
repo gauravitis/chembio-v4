@@ -124,14 +124,14 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-[#7BA4F4]" />
-                <a href="tel:+911234567890" className="text-gray-400 hover:text-white transition-colors">
-                  +91 123 456 7890
+                <a href="tel:+91-120-4909400" className="text-gray-400 hover:text-white transition-colors">
+                  +91 120 4909400
                 </a>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-[#7BA4F4]" />
-                <a href="mailto:info@chembio.com" className="text-gray-400 hover:text-white transition-colors">
-                  info@chembio.com
+                <a href="mailto:sales.chembio@gmail.com" className="text-gray-400 hover:text-white transition-colors">
+                  sales.chembio@gmail.com
                 </a>
               </div>
             </div>
