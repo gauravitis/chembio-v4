@@ -71,14 +71,14 @@ export default function TeamPage() {
         expertise: 'B2B Sales, Market Strategy, Client Relations',
         experience: '5+ years in Sales & Marketing',
         email: 'rahul.chembio@gmail.com',
-        phone: '+91-XXXXXXXXXX'
+        phone: '+91-8929800814'
       },
       {
-        name: 'Narenar Sharma',
+        name: 'Narendar Sharma',
         role: 'Sales & Marketing Manager',
         expertise: 'B2B Sales, Market Strategy, Client Relations',
         experience: '10+ years in Sales & Marketing',
-        email: 'narenar.chembio@gmail.com',
+        email: 'narendar.chembio@gmail.com',
         phone: '+91-XXXXXXXXXX'
       },
       {
