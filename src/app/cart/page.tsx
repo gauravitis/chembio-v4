@@ -192,6 +192,10 @@ export default function CartPage() {
                   <span>Subtotal</span>
                   <span>₹{total}</span>
                 </div>
+                <div className="flex justify-between text-gray-700">
+                  <span>GST (18%)</span>
+                  <span>₹{Math.round(total * 0.18)}</span>
+                </div>
                 <div className="flex justify-between text-gray-500">
                   <span>Shipping</span>
                   <span>Free</span>
@@ -199,7 +203,7 @@ export default function CartPage() {
                 <div className="border-t pt-2 mt-2">
                   <div className="flex justify-between font-semibold text-gray-900">
                     <span>Total</span>
-                    <span>₹{total}</span>
+                    <span>₹{total + Math.round(total * 0.18)}</span>
                   </div>
                 </div>
               </div>
