@@ -131,7 +131,7 @@ export default function TeamPage() {
         expertise: 'Customer Care, Technical Assistance',
         experience: '5+ years in technical customer service',
         email: 'rajeev.chembio@gmail.com',
-        phone: '+91-9711585551',
+        phone: '+91-9711585551, +91-8929800816',
         image: '/images/team/Rajeev-Yadav.jpeg'
       }
     ],
@@ -142,7 +142,7 @@ export default function TeamPage() {
         expertise: 'Supply Chain Management, Distribution',
         experience: '10+ years in chemical logistics',
         email: 'rajeev.chembio@gmail.com',
-        phone: '+91-9711585551',
+        phone: '+91-9711585551, +91-8929800816',
         image: '/images/team/Rajeev-Yadav.jpeg'
       },
       {
