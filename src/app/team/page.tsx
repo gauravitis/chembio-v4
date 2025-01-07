@@ -108,12 +108,22 @@ export default function TeamPage() {
         phone: '+91-9999817050'
       },
       {
-        name: 'Rohit',
+        name: 'Rohit Kumar',
         role: 'Technical Support Specialist',
         expertise: 'Product Support, Customer Relations',
         experience: '6+ years in customer support',
         email: 'rohit.chembio@gmail.com',
-        phone: '+91-7503821546'
+        phone: '+91-7503821546',
+        image: '/images/team/Rohit-Kumar.jpeg'
+      },
+      {
+        name: 'Ankit Diwedi',
+        role: 'Technical Support Specialist',
+        expertise: 'Product Support, Customer Relations',
+        experience: '2+ years in customer support',
+        email: 'ankit.chembio@gmail.com',
+        phone: '+91-8851576793',
+        image: '/images/team/Ankit-Diwedi.jpeg'
       },
       {
         name: 'Rajeev Yadav',
@@ -121,7 +131,8 @@ export default function TeamPage() {
         expertise: 'Customer Care, Technical Assistance',
         experience: '5+ years in technical customer service',
         email: 'rajeev.chembio@gmail.com',
-        phone: '+91-9711585551'
+        phone: '+91-9711585551',
+        image: '/images/team/Rajeev-Yadav.jpeg'
       }
     ],
     'Logistics & Supply Chain': [
@@ -131,7 +142,8 @@ export default function TeamPage() {
         expertise: 'Supply Chain Management, Distribution',
         experience: '10+ years in chemical logistics',
         email: 'rajeev.chembio@gmail.com',
-        phone: '+91-9711585551'
+        phone: '+91-9711585551',
+        image: '/images/team/Rajeev-Yadav.jpeg'
       },
       {
         name: 'Vikas Prajapati',
@@ -161,7 +173,7 @@ export default function TeamPage() {
     {
       name: 'Customer Support',
       description: 'Providing exceptional service and technical assistance',
-      members: 3
+      members: 4
     },
     {
       name: 'Logistics & Supply Chain',
