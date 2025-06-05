@@ -10,7 +10,7 @@ export function PageHeader({ title, subtitle, description }: PageHeaderProps) {
   return (
     <div className="relative py-24 bg-gradient-custom hero-grid">
       <div className="hero-glow" />
-      <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
+      <div className="container-centered text-center relative z-10">
         <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fade-in bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 text-transparent bg-clip-text">
           {title}
         </h1>

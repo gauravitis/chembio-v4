@@ -48,6 +48,29 @@
 }
 
 /* Custom Utilities */
+.container-centered {
+  width: 100%;
+  max-width: 1280px; /* max-w-7xl equivalent */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-centered {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-centered {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
 .bg-gradient-custom {
   background: linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to));
   background-image: 

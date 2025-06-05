@@ -22,7 +22,7 @@ export function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/30">
-      <nav className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
+      <nav className="container-centered flex items-center justify-between h-16">
         <Link href="/" className="font-bold text-xl text-blue-600">
           ChemBio
         </Link>

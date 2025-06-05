@@ -45,8 +45,8 @@ export default function ContactPage() {
         subtitle="Get in touch with our team" 
       />
 
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-20">
+        <div className="container-centered">
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Contact Information Cards */}
             <div className="space-y-6">
@@ -66,8 +66,8 @@ export default function ContactPage() {
                   </h3>
                 </div>
                 <p className="text-gray-600 leading-relaxed">
-                  L-10 Himalya Tower,<br />
-                  Gyankhand 2, Indirapuram, Ghaziabad<br />
+                  L-10 Himalya Legend,<br />
+                  Nyay Khand 1, Indirapuram, Ghaziabad<br />
                   U.P, India - 201014
                 </p>
               </motion.div>
@@ -88,10 +88,7 @@ export default function ContactPage() {
                   </h3>
                 </div>
                 <p className="text-gray-600 leading-relaxed">
-                  <strong>General Inquiries:</strong><br />
-                  contact.chembio@gmail.com<br /><br />
-                  <strong>Support:</strong><br />
-                  sales.chembio@gmail.com
+                  chembio.sales@gmail.com
                 </p>
               </motion.div>
 

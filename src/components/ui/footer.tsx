@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="relative bg-gradient-custom border-t border-white/10">
       <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
-      <div className="relative max-w-7xl mx-auto px-4 py-16">
+      <div className="relative container-centered py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Company Info */}
           <div className="space-y-4">

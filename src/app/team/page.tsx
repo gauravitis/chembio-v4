@@ -6,7 +6,7 @@ import { SimpleModal } from '@/components/ui/simple-modal';
 import { DepartmentCard } from '@/components/ui/department-card';
 import { useState } from 'react';
 import Image from 'next/image';
-import { LinkedinIcon, MailIcon, PhoneIcon } from 'lucide-react';
+import { LinkedinIcon, MailIcon, PhoneIcon, Users, HeadphonesIcon, TruckIcon, BarChart2Icon, Building2Icon } from 'lucide-react';
 
 interface TeamMember {
   name: string;
@@ -146,20 +146,48 @@ export default function TeamPage() {
         image: '/images/team/Rajeev-Yadav.jpeg'
       },
       {
-        name: 'Vikas Prajapati',
-        role: 'Supply Chain Analyst',
-        expertise: 'Inventory Management, Process Optimization',
-        experience: '7+ years in supply chain operations',
-        email: 'vikas.chembio@gmail.com',
-        phone: '+91-9313204913'
-      },
-      {
         name: 'Chandar Gupt',
         role: 'Warehouse Supervisor',
         expertise: 'Warehouse Management, Shipping Operations',
         experience: '8+ years in chemical storage and handling',
         email: 'chandu.chembio@gmail.com',
         phone: '+91-9911253516'
+      }
+    ],
+    'Accounts': [
+      {
+        name: 'Vikas Prajapati',
+        role: 'Accounts Executive',
+        expertise: 'Financial Accounting, Process Optimization',
+        experience: '7+ years in accounting operations',
+        email: 'vikas.chembio@gmail.com',
+        phone: '+91-9313204913'
+      }
+    ],
+    'Administration': [
+      {
+        name: 'Rajesh Gupta',
+        role: 'Administrative Director',
+        expertise: 'Office Management, HR Coordination, Policy Implementation',
+        experience: '15+ years in administrative leadership',
+        email: 'rajesh.chembio@gmail.com',
+        phone: '+91-9876543213'
+      },
+      {
+        name: 'Neha Patel',
+        role: 'HR Manager',
+        expertise: 'Recruitment, Employee Relations, Training & Development',
+        experience: '10+ years in human resources management',
+        email: 'neha.chembio@gmail.com',
+        phone: '+91-9876543214'
+      },
+      {
+        name: 'Suresh Malhotra',
+        role: 'Office Coordinator',
+        expertise: 'Facility Management, Administrative Support, Document Control',
+        experience: '7+ years in office administration',
+        email: 'suresh.chembio@gmail.com',
+        phone: '+91-9876543215'
       }
     ]
   };
@@ -168,17 +196,32 @@ export default function TeamPage() {
     {
       name: 'Sales & Marketing',
       description: 'Building strong relationships and market presence',
-      members: 5
+      members: 5,
+      icon: <BarChart2Icon className="w-6 h-6 text-blue-400" />
     },
     {
       name: 'Customer Support',
       description: 'Providing exceptional service and technical assistance',
-      members: 4
+      members: 4,
+      icon: <HeadphonesIcon className="w-6 h-6 text-blue-400" />
     },
     {
       name: 'Logistics & Supply Chain',
       description: 'Managing efficient distribution and delivery',
-      members: 3
+      members: 3,
+      icon: <TruckIcon className="w-6 h-6 text-blue-400" />
+    },
+    {
+      name: 'Accounts',
+      description: 'Handling financial operations and reporting',
+      members: 1,
+      icon: <BarChart2Icon className="w-6 h-6 text-blue-400" />
+    },
+    {
+      name: 'Administration',
+      description: 'Managing office operations and human resources',
+      members: 3,
+      icon: <Building2Icon className="w-6 h-6 text-blue-400" />
     }
   ];
 
@@ -200,8 +243,9 @@ export default function TeamPage() {
       />
 
       {/* Leadership Team */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-20">
+        <div className="container-centered">
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -310,8 +354,9 @@ export default function TeamPage() {
       </section>
 
       {/* Departments */}
-      <section className="py-20 px-4 bg-white/5 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-20 bg-white/5 backdrop-blur-sm">
+        <div className="container-centered">
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -336,6 +381,7 @@ export default function TeamPage() {
                 members={dept.members}
                 onClick={() => handleDepartmentClick(dept.name)}
                 index={index}
+                icon={dept.icon}
               />
             ))}
           </div>

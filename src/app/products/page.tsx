@@ -122,8 +122,8 @@ export default function ProductsPage() {
 
         <UpdateBanner />
 
-        <section className="py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto space-y-8">
+        <section className="py-12">
+          <div className="container-centered space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-[1fr,auto] gap-4 items-center bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <ProductSearch value={searchTerm} onChange={setSearchTerm} />
               <ViewToggle view={view} onChange={setView} />

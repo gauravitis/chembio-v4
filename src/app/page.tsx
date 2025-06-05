@@ -133,9 +133,9 @@ export default function Home() {
       <Molecule />
       {/* Hero Section */}
       <section className="hero-section">
-        <div className="hero-grid min-h-screen px-4">
+        <div className="hero-grid min-h-screen">
           <div className="hero-glow parallax-element" data-speed="4" />
-          <div className="max-w-7xl mx-auto text-center hero-content py-32">
+          <div className="container-centered text-center hero-content py-32">
             <div className="space-y-8 animate-fade-in">
               <h1 className="text-5xl md:text-7xl font-bold text-white animate-float parallax-element" data-speed="2">
                 Chembio Lifesciences
@@ -211,11 +211,11 @@ export default function Home() {
       <section 
         ref={servicesRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in will-change-transform",
+          "py-16 bg-white/5 backdrop-blur-sm section-fade-in will-change-transform",
           servicesVisible && "visible"
         )}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="container-centered">
           <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
             Our Services
           </h3>
@@ -251,11 +251,11 @@ export default function Home() {
       <section 
         ref={categoriesRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 section-fade-in will-change-transform",
+          "py-16 section-fade-in will-change-transform",
           categoriesVisible && "visible"
         )}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="container-centered">
           <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
             Product Categories
           </h3>
@@ -315,11 +315,11 @@ export default function Home() {
       <section 
         ref={whyUsRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 bg-white/5 backdrop-blur-sm section-fade-in will-change-transform",
+          "py-16 bg-white/5 backdrop-blur-sm section-fade-in will-change-transform",
           whyUsVisible && "visible"
         )}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="container-centered">
           <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
             Why Choose Us
           </h3>
@@ -388,11 +388,11 @@ export default function Home() {
       <section 
         ref={partnersRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 section-fade-in will-change-transform",
+          "py-16 section-fade-in will-change-transform",
           partnersVisible && "visible"
         )}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="container-centered">
           <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-8">
             Trusted Partners
           </h3>
@@ -450,11 +450,12 @@ export default function Home() {
       <section 
         ref={testimonialsRef as React.RefObject<HTMLElement>}
         className={cn(
-          "py-16 px-4 section-fade-in will-change-transform",
+          "py-16 section-fade-in will-change-transform",
           testimonialsVisible && "visible"
         )}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="container-centered">
+          
           <h3 className="text-2xl md:text-3xl font-semibold text-center text-gradient mb-4">
             What Our Customers Say
           </h3>
@@ -488,8 +489,9 @@ export default function Home() {
       </section>
 
       {/* Newsletter Subscription */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16">
+        <div className="container-centered">
+          
           <NewsletterForm />
         </div>
       </section>

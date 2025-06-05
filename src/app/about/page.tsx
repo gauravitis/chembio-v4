@@ -84,8 +84,9 @@ export default function AboutPage() {
       />
 
       {/* Mission & Vision */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-20">
+        <div className="container-centered">
+          
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -129,8 +130,8 @@ export default function AboutPage() {
       </section>
 
       {/* Core Values */}
-      <section className="py-20 px-4 bg-white/5 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-20 bg-white/5 backdrop-blur-sm">
+        <div className="container-centered">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -161,8 +162,9 @@ export default function AboutPage() {
       </section>
 
       {/* History Timeline */}
-      <section className="py-20 px-4">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-20">
+        <div className="container-centered max-w-5xl">
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -184,14 +186,15 @@ export default function AboutPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 px-4 bg-white/5 backdrop-blur-sm">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto text-center"
-        >
+      <section className="py-20 bg-white/5 backdrop-blur-sm">
+        <div className="container-centered">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto text-center">
+            
           <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-6">
             Ready to Work Together?
           </h2>
@@ -203,7 +206,8 @@ export default function AboutPage() {
             Contact Us Today
           </Link>
         </motion.div>
-      </section>
+      </div>
+    </section>
     </main>
   );
 }

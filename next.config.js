@@ -1,16 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      'lab.honeywell.com',
-      'www.sigmaaldrich.com',
-      'www.himedialabs.com',
-      'firebasestorage.googleapis.com'
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lab.honeywell.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.sigmaaldrich.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.himedialabs.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+      },
     ],
   },
-  experimental: {
-    serverActions: true,
-  },
+  // Remove serverActions as it's available by default in Next.js 14
   env: {
     // Server-side Firebase Admin variables
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,

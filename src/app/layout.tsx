@@ -70,9 +70,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen flex flex-col w-full overflow-x-hidden">
             <Navigation />
-            <main className="flex-1">
+            <main className="flex-1 w-full">
               {children}
             </main>
           </div>

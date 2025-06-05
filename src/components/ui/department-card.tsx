@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { UsersIcon } from 'lucide-react';
+import { ReactNode } from 'react';
 
 interface DepartmentCardProps {
   name: string;
@@ -7,6 +8,7 @@ interface DepartmentCardProps {
   members: number;
   onClick: () => void;
   index: number;
+  icon?: ReactNode;
 }
 
 export function DepartmentCard({
@@ -14,7 +16,8 @@ export function DepartmentCard({
   description,
   members,
   onClick,
-  index
+  index,
+  icon
 }: DepartmentCardProps) {
   return (
     <motion.div
@@ -37,6 +40,11 @@ export function DepartmentCard({
 
         {/* Content */}
         <div className="relative z-10">
+          {/* Department Icon */}
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-600/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+            {icon || <UsersIcon className="w-6 h-6 text-blue-400" />}
+          </div>
+          
           <h3 className="text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">
             {name}
           </h3>
