@@ -44,8 +44,28 @@ export default function AdminLogin() {
       ) {
         console.log('Login successful, setting cookie...');
         
-        // Set admin token cookie with proper attributes
-        document.cookie = `admin_token=${ADMIN_TOKEN}; path=/; max-age=86400; SameSite=Lax`;
+        // Set admin token cookie with proper attributes for both development and production
+        const isProduction = window.location.hostname !== 'localhost';
+        console.log('Environment:', isProduction ? 'Production' : 'Development');
+        console.log('Hostname:', window.location.hostname);
+        
+        const cookieOptions = [
+          `admin_token=${ADMIN_TOKEN}`,
+          'path=/',
+          'max-age=86400',
+          'SameSite=Lax',
+          isProduction ? `domain=.${window.location.hostname}` : '',
+          isProduction ? 'secure' : ''
+        ].filter(Boolean).join('; ');
+        
+        console.log('Setting cookie with options:', cookieOptions);
+        document.cookie = cookieOptions;
+        
+        // Verify cookie was set
+        const cookieSet = document.cookie
+          .split('; ')
+          .some(row => row.startsWith('admin_token='));
+        console.log('Cookie verification:', cookieSet ? 'Cookie found after setting' : 'Cookie not found after setting');
         
         toast.success('Login successful');
         console.log('Cookie set, redirecting...');
