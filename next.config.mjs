@@ -21,10 +21,15 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'firebasestorage.googleapis.com',
         pathname: '/**',
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: 'wscpimg.sial.com',
+        pathname: '/**',
+      },
     ],
     unoptimized: true,
-    domains: ['firebasestorage.googleapis.com'],
+    domains: ['firebasestorage.googleapis.com', 'wscpimg.sial.com'],
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {

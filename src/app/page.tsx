@@ -9,6 +9,7 @@ import { cn, throttle } from '@/lib/utils';
 import { TestimonialCard } from '@/components/ui/testimonial-card';
 import { NewsletterForm } from '@/components/ui/newsletter-form';
 import { Footer } from '@/components/ui/footer';
+import { SaleBanner } from '@/components/sale/SaleBanner';
 
 interface ServiceCardProps {
   icon: string;
@@ -156,6 +157,11 @@ export default function Home() {
               </div>
             </div>
             
+            {/* Sale Banner */}
+            <div className="mt-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <SaleBanner />
+            </div>
+
             {/* Stats */}
             <div 
               ref={statsRef}

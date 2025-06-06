@@ -1,23 +1,34 @@
 export interface Product {
   id: string;
   name: string;
-  description?: string | undefined;
+  description: string;
+  price: number;
+  salePrice?: number;  // Optional sale price
+  isOnSale?: boolean;  // Flag to indicate if the product is on sale
+  category: string;
+  subcategory?: string;
+  brand?: string;
+  sku: string;
+  stock: number;
+  images: string[];
+  specifications?: Record<string, string>;
+  features?: string[];
+  documents?: {
+    name: string;
+    url: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
   casNumber?: string | undefined;
   catalogueId: string;
-  category: string;
-  packSize: string;
   hsnCode?: string | undefined;
   make: string;
-  price: number;
   mrp?: number | undefined;
   purity?: string | undefined;
   image: string;
-  createdAt?: string | undefined;
-  updatedAt?: string | undefined;
   stockQuantity?: number | undefined;
   manufacturer?: string | undefined;
   tags?: string[] | undefined;
-  specifications?: Record<string, string> | undefined;
   relatedProducts?: string[] | undefined; // IDs of related products
   rating?: number | undefined;
   reviewCount?: number | undefined;

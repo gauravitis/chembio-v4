@@ -5,6 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function formatPrice(price: number): string {
+  return `₹${price.toLocaleString()}`
+}
+
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
   limit: number

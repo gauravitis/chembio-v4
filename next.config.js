@@ -2,21 +2,101 @@
 const nextConfig = {
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'lab.honeywell.com',
-      },
+      // Sigma Aldrich
       {
         protocol: 'https',
         hostname: 'www.sigmaaldrich.com',
       },
       {
         protocol: 'https',
+        hostname: 'media.sigmaaldrich.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'wscpimg.sial.com',
+      },
+      // SRL
+      {
+        protocol: 'https',
+        hostname: 'www.srlchem.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.srlchemicals.com',
+      },
+      // Himedia
+      {
+        protocol: 'https',
         hostname: 'www.himedialabs.com',
       },
       {
         protocol: 'https',
+        hostname: 'himedialabs.com',
+      },
+      // Honeywell
+      {
+        protocol: 'https',
+        hostname: 'lab.honeywell.com',
+      },
+      // Merck
+      {
+        protocol: 'https',
+        hostname: 'www.merckmillipore.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.merck.com',
+      },
+      // Thermo Fisher
+      {
+        protocol: 'https',
+        hostname: 'www.thermofisher.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.thermofisher.com',
+      },
+      // Fisher Scientific
+      {
+        protocol: 'https',
+        hostname: 'www.fishersci.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.fishersci.co.uk',
+      },
+      // VWR
+      {
+        protocol: 'https',
+        hostname: 'www.vwr.com',
+      },
+      // TCI
+      {
+        protocol: 'https',
+        hostname: 'www.tcichemicals.com',
+      },
+      // Alfa Aesar
+      {
+        protocol: 'https',
+        hostname: 'www.alfa.com',
+      },
+      // Avantor
+      {
+        protocol: 'https',
+        hostname: 'www.avantorsciences.com',
+      },
+      // Common image hosting
+      {
+        protocol: 'https',
         hostname: 'firebasestorage.googleapis.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
       },
     ],
   },

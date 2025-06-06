@@ -5,11 +5,10 @@ import { Product } from '@/types/product';
 import { PageHeader } from '@/components/ui/page-header';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Plus, Edit, Trash } from 'lucide-react';
+import { Tag, Search, Percent } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import Link from 'next/link';
 
-export default function ProductsManagement() {
+export default function SpecialOffersManagement() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,39 +42,76 @@ export default function ProductsManagement() {
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
-  // Delete product
-  const deleteProduct = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
-
+  // Toggle sale status for a product
+  const toggleSale = async (product: Product) => {
     try {
-      const response = await fetch(`/api/products/${productId}`, {
-        method: 'DELETE',
+      const isOnSale = !product.isOnSale;
+      const salePrice = isOnSale ? 
+        (product.salePrice || Math.round(product.price * 0.9)) : // 10% discount by default
+        null;
+
+      const response = await fetch(`/api/products/${product.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          isOnSale,
+          salePrice,
+        }),
       });
 
-      if (!response.ok) throw new Error('Failed to delete product');
+      if (!response.ok) throw new Error('Failed to update product');
 
-      setProducts(products.filter(p => p.id !== productId));
-      toast.success('Product deleted successfully');
+      // Update local state
+      setProducts(products.map(p => 
+        p.id === product.id 
+          ? { ...p, isOnSale, salePrice } 
+          : p
+      ));
+
+      toast.success(isOnSale ? 'Added to special offers' : 'Removed from special offers');
     } catch (error) {
-      console.error('Error deleting product:', error);
-      toast.error('Failed to delete product');
+      console.error('Error updating product:', error);
+      toast.error('Failed to update product');
+    }
+  };
+
+  // Update sale price
+  const updateSalePrice = async (product: Product, newSalePrice: number) => {
+    try {
+      const response = await fetch(`/api/products/${product.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          salePrice: newSalePrice,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update price');
+
+      // Update local state
+      setProducts(products.map(p => 
+        p.id === product.id 
+          ? { ...p, salePrice: newSalePrice } 
+          : p
+      ));
+
+      toast.success('Sale price updated');
+    } catch (error) {
+      console.error('Error updating price:', error);
+      toast.error('Failed to update price');
     }
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <PageHeader
-          title="Products Management"
-          description="Add, edit, and manage your products"
-        />
-        <Link href="/admin/products/new">
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Add Product
-          </Button>
-        </Link>
-      </div>
+    <div className="container py-8 space-y-8">
+      <PageHeader
+        title="Special Offers Management"
+        description="Manage product discounts and special offers"
+      />
 
       {/* Search Bar */}
       <div className="relative">
@@ -108,6 +144,11 @@ export default function ProductsManagement() {
                     alt={product.name}
                     className="object-cover h-full w-full"
                   />
+                  {product.isOnSale && (
+                    <div className="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 py-0.5">
+                      SALE
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h3 className="font-semibold text-white">{product.name}</h3>
@@ -127,21 +168,25 @@ export default function ProductsManagement() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Link href={`/admin/products/${product.id}`}>
-                  <Button variant="outline" size="sm" className="flex items-center gap-2">
-                    <Edit className="h-4 w-4" />
-                    Edit
-                  </Button>
-                </Link>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  className="flex items-center gap-2"
-                  onClick={() => deleteProduct(product.id)}
+              <div className="flex items-center gap-4">
+                {product.isOnSale && (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      value={product.salePrice || ''}
+                      onChange={(e) => updateSalePrice(product, Number(e.target.value))}
+                      className="w-24"
+                      min={0}
+                      max={product.price}
+                    />
+                    <Percent className="h-4 w-4 text-gray-400" />
+                  </div>
+                )}
+                <Button
+                  onClick={() => toggleSale(product)}
+                  variant={product.isOnSale ? "destructive" : "default"}
                 >
-                  <Trash className="h-4 w-4" />
-                  Delete
+                  {product.isOnSale ? 'Remove from Sale' : 'Add to Sale'}
                 </Button>
               </div>
             </div>
@@ -150,4 +195,4 @@ export default function ProductsManagement() {
       </div>
     </div>
   );
-}
+} 
