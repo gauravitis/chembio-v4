@@ -25,16 +25,26 @@ export default function AdminLogin() {
       const ADMIN_PASSWORD = 'Chembio@2024';
       const ADMIN_TOKEN = 'cb_admin_token';
 
+      console.log('Attempting login with:', formData.username);
+      
       if (
         formData.username === ADMIN_USERNAME &&
         formData.password === ADMIN_PASSWORD
       ) {
-        // Set admin token cookie
-        document.cookie = `admin_token=${ADMIN_TOKEN}; path=/`;
+        console.log('Login successful, setting cookie...');
+        // Set admin token cookie with proper attributes
+        document.cookie = `admin_token=${ADMIN_TOKEN}; path=/; max-age=86400; SameSite=Strict`;
+        
         toast.success('Login successful');
-        // Force a hard navigation to ensure the cookie is set
-        window.location.href = '/admin/products';
+        console.log('Cookie set, redirecting...');
+        
+        // Use both methods to ensure redirection works
+        router.push('/admin/products');
+        setTimeout(() => {
+          window.location.href = '/admin/products';
+        }, 100);
       } else {
+        console.log('Invalid credentials');
         throw new Error('Invalid credentials');
       }
     } catch (error) {
