@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import Cookies from 'js-cookie';
 
 export default function AdminLayout({
   children,
@@ -17,9 +18,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     const checkAuth = () => {
-      const adminToken = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('admin_token='));
+      const adminToken = Cookies.get('admin_token');
 
       if (!adminToken && pathname !== '/admin/login') {
         console.log('No admin token found, redirecting to login');
@@ -65,6 +64,12 @@ export default function AdminLayout({
     return null;
   }
 
+  const handleLogout = () => {
+    Cookies.remove('admin_token', { path: '/' });
+    setIsAuthenticated(false);
+    router.push('/admin/login');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-custom">
       {/* Admin Navigation */}
@@ -93,11 +98,7 @@ export default function AdminLayout({
               <Button
                 variant="ghost"
                 className="text-red-500"
-                onClick={() => {
-                  document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-                  setIsAuthenticated(false);
-                  router.push('/admin/login');
-                }}
+                onClick={handleLogout}
               >
                 Logout
               </Button>
