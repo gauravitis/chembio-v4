@@ -5,14 +5,21 @@ import { db } from "@/lib/firebase-admin"
 
 const getSaleProducts = async (): Promise<Product[]> => {
   try {
+    console.log('Fetching sale products...');
     const productsRef = db.collection('products');
     const q = productsRef.where('isOnSale', '==', true);
     const querySnapshot = await q.get();
     
-    const products = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Product[];
+    console.log('Found sale products:', querySnapshot.size);
+    
+    const products = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      console.log('Product data:', { id: doc.id, isOnSale: data.isOnSale, salePrice: data.salePrice });
+      return {
+        id: doc.id,
+        ...data
+      };
+    }) as Product[];
 
     return products;
   } catch (error) {
