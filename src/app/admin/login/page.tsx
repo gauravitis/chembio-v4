@@ -20,16 +20,20 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      // In a real application, you would validate against your backend
-      // For now, we'll use a simple check against environment variables
+      // Temporary hardcoded credentials
+      const ADMIN_USERNAME = 'admin@chembiolifesciences.com';
+      const ADMIN_PASSWORD = 'Chembio@2024';
+      const ADMIN_TOKEN = 'cb_admin_token';
+
       if (
-        formData.username === process.env.NEXT_PUBLIC_ADMIN_USERNAME &&
-        formData.password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD
+        formData.username === ADMIN_USERNAME &&
+        formData.password === ADMIN_PASSWORD
       ) {
         // Set admin token cookie
-        document.cookie = `admin_token=${process.env.NEXT_PUBLIC_ADMIN_TOKEN}; path=/`;
+        document.cookie = `admin_token=${ADMIN_TOKEN}; path=/`;
         toast.success('Login successful');
-        router.push('/admin/products');
+        // Force a hard navigation to ensure the cookie is set
+        window.location.href = '/admin/products';
       } else {
         throw new Error('Invalid credentials');
       }
