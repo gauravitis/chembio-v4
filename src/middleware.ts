@@ -18,14 +18,17 @@ export function middleware(request: NextRequest) {
 
   // Get the admin token from cookies
   const adminToken = request.cookies.get('admin_token')?.value
+  console.log('Middleware - Path:', path, 'Admin Token:', adminToken ? 'Present' : 'Missing')
 
   // If user is already logged in and tries to access login page, redirect to admin dashboard
   if (path === '/admin/login' && adminToken) {
+    console.log('Redirecting from login to admin dashboard')
     return NextResponse.redirect(new URL('/admin/products', request.url))
   }
 
   // If it's an admin path (except login) and there's no admin token, redirect to login
   if (isAdminPath && path !== '/admin/login' && !adminToken) {
+    console.log('Redirecting to login page - no admin token')
     return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 
@@ -36,6 +39,7 @@ export function middleware(request: NextRequest) {
 
   // For all other paths, require authentication
   if (!adminToken) {
+    console.log('Redirecting to login page - no admin token')
     return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 

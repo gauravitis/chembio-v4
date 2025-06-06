@@ -33,16 +33,13 @@ export default function AdminLogin() {
       ) {
         console.log('Login successful, setting cookie...');
         // Set admin token cookie with proper attributes
-        document.cookie = `admin_token=${ADMIN_TOKEN}; path=/; max-age=86400; SameSite=Strict`;
+        document.cookie = `admin_token=${ADMIN_TOKEN}; path=/; max-age=86400; SameSite=Lax`;
         
         toast.success('Login successful');
         console.log('Cookie set, redirecting...');
         
-        // Use both methods to ensure redirection works
-        router.push('/admin/products');
-        setTimeout(() => {
-          window.location.href = '/admin/products';
-        }, 100);
+        // Force a hard navigation to ensure the cookie is set
+        window.location.href = '/admin/products';
       } else {
         console.log('Invalid credentials');
         throw new Error('Invalid credentials');
