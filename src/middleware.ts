@@ -10,7 +10,8 @@ export function middleware(request: NextRequest) {
     path === '/products' || 
     path === '/special-offers' || 
     path.startsWith('/products/') ||
-    path.startsWith('/api/products')
+    path.startsWith('/api/products') ||
+    path === '/admin/login' // Add login page to public paths
 
   // Check if the path is an admin route
   const isAdminPath = path.startsWith('/admin')
@@ -18,8 +19,13 @@ export function middleware(request: NextRequest) {
   // Get the admin token from cookies
   const adminToken = request.cookies.get('admin_token')?.value
 
-  // If it's an admin path and there's no admin token, redirect to login
-  if (isAdminPath && !adminToken) {
+  // If user is already logged in and tries to access login page, redirect to admin dashboard
+  if (path === '/admin/login' && adminToken) {
+    return NextResponse.redirect(new URL('/admin/products', request.url))
+  }
+
+  // If it's an admin path (except login) and there's no admin token, redirect to login
+  if (isAdminPath && path !== '/admin/login' && !adminToken) {
     return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 
