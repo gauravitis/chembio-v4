@@ -54,7 +54,7 @@ export default function AdminLogin() {
           'path=/',
           'max-age=86400',
           'SameSite=Lax',
-          isProduction ? `domain=.${window.location.hostname}` : '',
+          // Don't set domain in production - let the browser use the current domain
           isProduction ? 'secure' : ''
         ].filter(Boolean).join('; ');
         
