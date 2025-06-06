@@ -1,0 +1,93 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/ui/page-header';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { toast } from 'react-hot-toast';
+
+export default function AdminLogin() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // In a real application, you would validate against your backend
+      // For now, we'll use a simple check against environment variables
+      if (
+        formData.username === process.env.NEXT_PUBLIC_ADMIN_USERNAME &&
+        formData.password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD
+      ) {
+        // Set admin token cookie
+        document.cookie = `admin_token=${process.env.NEXT_PUBLIC_ADMIN_TOKEN}; path=/`;
+        toast.success('Login successful');
+        router.push('/admin/products');
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error(error instanceof Error ? error.message : 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-custom flex items-center justify-center">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white/5 backdrop-blur-sm rounded-lg">
+        <PageHeader
+          title="Admin Login"
+          description="Enter your credentials to access the admin panel"
+        />
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-200">Username</label>
+            <Input
+              name="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              placeholder="Enter your username"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-200">Password</label>
+            <Input
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
+} 
