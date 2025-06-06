@@ -3,7 +3,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  salePrice?: number;  // Optional sale price
+  salePrice?: number | null;  // Updated to allow null values
   isOnSale?: boolean;  // Flag to indicate if the product is on sale
   category: string;
   subcategory?: string;
