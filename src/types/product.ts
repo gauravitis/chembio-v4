@@ -32,6 +32,7 @@ export interface Product {
   relatedProducts?: string[] | undefined; // IDs of related products
   rating?: number | undefined;
   reviewCount?: number | undefined;
+  packSize: string;  // Added packSize property
 }
 
 export interface ProductFilter {
