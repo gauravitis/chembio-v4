@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/ui/page-header';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,17 @@ export default function AdminLogin() {
     username: '',
     password: '',
   });
+
+  // Check if already logged in
+  useEffect(() => {
+    const adminToken = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('admin_token='));
+
+    if (adminToken) {
+      router.push('/admin/products');
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,14 +43,18 @@ export default function AdminLogin() {
         formData.password === ADMIN_PASSWORD
       ) {
         console.log('Login successful, setting cookie...');
+        
         // Set admin token cookie with proper attributes
         document.cookie = `admin_token=${ADMIN_TOKEN}; path=/; max-age=86400; SameSite=Lax`;
         
         toast.success('Login successful');
         console.log('Cookie set, redirecting...');
-        
-        // Force a hard navigation to ensure the cookie is set
-        window.location.href = '/admin/products';
+
+        // Use both methods to ensure redirection works
+        router.push('/admin/products');
+        setTimeout(() => {
+          window.location.href = '/admin/products';
+        }, 500);
       } else {
         console.log('Invalid credentials');
         throw new Error('Invalid credentials');
@@ -75,6 +90,7 @@ export default function AdminLogin() {
               onChange={handleChange}
               required
               placeholder="Enter your username"
+              autoComplete="username"
             />
           </div>
 
@@ -87,6 +103,7 @@ export default function AdminLogin() {
               onChange={handleChange}
               required
               placeholder="Enter your password"
+              autoComplete="current-password"
             />
           </div>
 

@@ -13,6 +13,7 @@ export default function AdminLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -21,25 +22,47 @@ export default function AdminLayout({
         .find(row => row.startsWith('admin_token='));
 
       if (!adminToken && pathname !== '/admin/login') {
+        console.log('No admin token found, redirecting to login');
         router.push('/admin/login');
         return;
       }
+
+      if (adminToken) {
+        console.log('Admin token found, user is authenticated');
+        setIsAuthenticated(true);
+      }
+      
       setIsLoading(false);
     };
 
     checkAuth();
   }, [pathname, router]);
 
-  if (pathname === '/admin/login') {
+  // If on login page and authenticated, redirect to admin products
+  useEffect(() => {
+    if (isAuthenticated && pathname === '/admin/login') {
+      console.log('Already authenticated, redirecting to admin products');
+      router.push('/admin/products');
+    }
+  }, [isAuthenticated, pathname, router]);
+
+  // Show login page without layout
+  if (pathname === '/admin/login' && !isAuthenticated) {
     return children;
   }
 
+  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">Loading...</div>
       </div>
     );
+  }
+
+  // Show admin layout only if authenticated
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (
@@ -72,6 +95,7 @@ export default function AdminLayout({
                 className="text-red-500"
                 onClick={() => {
                   document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                  setIsAuthenticated(false);
                   router.push('/admin/login');
                 }}
               >
