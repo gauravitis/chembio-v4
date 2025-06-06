@@ -47,28 +47,44 @@ export default function AdminLogin() {
         console.log('Environment:', isProduction ? 'Production' : 'Development');
         console.log('Hostname:', window.location.hostname);
         
+        // Get the base domain (remove any subdomains)
+        const domainParts = window.location.hostname.split('.');
+        const baseDomain = domainParts.slice(-2).join('.');
+        
         const cookieOptions = {
           path: '/',
           expires: 1, // 1 day
-          sameSite: 'lax' as const,
-          secure: isProduction
+          sameSite: 'strict' as const,
+          secure: isProduction,
+          domain: isProduction ? baseDomain : undefined
         };
         
-        console.log('Setting cookie with options:', cookieOptions);
-        Cookies.set('admin_token', ADMIN_TOKEN, cookieOptions);
+        console.log('Setting cookie with options:', JSON.stringify(cookieOptions));
         
-        // Verify cookie was set
-        const cookieSet = Cookies.get('admin_token');
-        console.log('Cookie verification:', cookieSet ? 'Cookie found after setting' : 'Cookie not found after setting');
-        
-        toast.success('Login successful');
-        console.log('Cookie set, redirecting...');
+        try {
+          // First, clear any existing cookie
+          Cookies.remove('admin_token', { path: '/' });
+          
+          // Set the new cookie
+          Cookies.set('admin_token', ADMIN_TOKEN, cookieOptions);
+          
+          // Verify cookie was set
+          const cookieSet = Cookies.get('admin_token');
+          console.log('Cookie verification:', cookieSet ? 'Cookie found after setting' : 'Cookie not found after setting');
+          
+          if (!cookieSet) {
+            throw new Error('Failed to set cookie');
+          }
+          
+          toast.success('Login successful');
+          console.log('Cookie set, redirecting...');
 
-        // Use both methods to ensure redirection works
-        router.push('/admin/products');
-        setTimeout(() => {
-          window.location.href = '/admin/products';
-        }, 500);
+          // Use router.push for client-side navigation
+          router.push('/admin/products');
+        } catch (error) {
+          console.error('Error setting cookie:', error);
+          toast.error('Failed to set login cookie');
+        }
       } else {
         console.log('Invalid credentials');
         throw new Error('Invalid credentials');
