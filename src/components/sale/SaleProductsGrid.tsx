@@ -1,35 +1,53 @@
+'use client'
+
 import { Product } from "@/types/product"
 import { ProductCard } from "../products/ProductCard"
 import { Tag } from "lucide-react"
-import { db } from "@/lib/firebase-admin"
+import { db } from "@/lib/firebase"
+import { collection, query, where, getDocs } from "firebase/firestore"
+import { useEffect, useState } from "react"
 
-const getSaleProducts = async (): Promise<Product[]> => {
-  try {
-    console.log('Fetching sale products...');
-    const productsRef = db.collection('products');
-    const q = productsRef.where('isOnSale', '==', true);
-    const querySnapshot = await q.get();
-    
-    console.log('Found sale products:', querySnapshot.size);
-    
-    const products = querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      console.log('Product data:', { id: doc.id, isOnSale: data.isOnSale, salePrice: data.salePrice });
-      return {
-        id: doc.id,
-        ...data
-      };
-    }) as Product[];
+export function SaleProductsGrid() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
 
-    return products;
-  } catch (error) {
-    console.error('Error fetching sale products:', error);
-    return [];
+  useEffect(() => {
+    const fetchSaleProducts = async () => {
+      try {
+        console.log('Fetching sale products...');
+        const productsRef = collection(db, 'products');
+        const q = query(productsRef, where('isOnSale', '==', true));
+        const querySnapshot = await getDocs(q);
+        
+        console.log('Found sale products:', querySnapshot.size);
+        
+        const fetchedProducts = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          console.log('Product data:', { id: doc.id, isOnSale: data.isOnSale, salePrice: data.salePrice });
+          return {
+            id: doc.id,
+            ...data
+          } as Product;
+        });
+
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error fetching sale products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSaleProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
   }
-}
-
-export async function SaleProductsGrid() {
-  const products = await getSaleProducts()
 
   return (
     <>
@@ -58,4 +76,4 @@ export async function SaleProductsGrid() {
       )}
     </>
   )
-} 
+}

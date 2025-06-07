@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Explore our special offers and discounted products. Limited time deals on selected items.",
 }
 
-export default async function SpecialOffersPage() {
+export default function SpecialOffersPage() {
   return (
     <main className="min-h-screen bg-gradient-custom">
       {/* Header Section */}
@@ -24,4 +24,4 @@ export default async function SpecialOffersPage() {
       </section>
     </main>
   )
-} 
+}
