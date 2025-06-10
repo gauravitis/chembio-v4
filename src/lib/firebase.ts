@@ -1,5 +1,4 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -14,7 +13,13 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Only initialize auth on the client side
+let auth;
+if (typeof window !== 'undefined') {
+  const { getAuth } = require('firebase/auth');
+  auth = getAuth(app);
+}
 
 export { app, auth, db };

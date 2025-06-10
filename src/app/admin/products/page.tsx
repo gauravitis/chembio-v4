@@ -19,13 +19,20 @@ export default function ProductsManagement() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const response = await fetch('/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
         const data = await response.json();
-        setProducts(data.products);
-        setFilteredProducts(data.products);
+        const productsList = data.products || [];
+        setProducts(productsList);
+        setFilteredProducts(productsList);
       } catch (error) {
         console.error('Error fetching products:', error);
         toast.error('Failed to load products');
+        setProducts([]);
+        setFilteredProducts([]);
       } finally {
         setLoading(false);
       }
@@ -36,6 +43,8 @@ export default function ProductsManagement() {
 
   // Filter products based on search
   useEffect(() => {
+    if (!products) return;
+    
     const filtered = products.filter(product =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.category.toLowerCase().includes(searchQuery.toLowerCase())
@@ -90,7 +99,7 @@ export default function ProductsManagement() {
       </div>
 
       {/* Products Grid */}
-      <div className="grid gap-6">
+      <div className="grid gap-4">
         {loading ? (
           <div className="text-center py-12">Loading products...</div>
         ) : filteredProducts.length === 0 ? (

@@ -23,10 +23,34 @@ export function SaleProductsGrid() {
         
         const fetchedProducts = querySnapshot.docs.map(doc => {
           const data = doc.data();
-          console.log('Product data:', { id: doc.id, isOnSale: data.isOnSale, salePrice: data.salePrice });
+          
+          // Log detailed product data
+          console.log('Product data:', { 
+            id: doc.id, 
+            isOnSale: data.isOnSale, 
+            salePrice: data.salePrice,
+            image: data.image,
+            images: data.images,
+            hasImage: !!data.image,
+            hasImages: !!(data.images && data.images.length > 0)
+          });
+          
+          // Ensure images array exists if only image field is present
+          const processedData = { ...data };
+          
+          if (!processedData.images || !Array.isArray(processedData.images) || processedData.images.length === 0) {
+            if (processedData.image) {
+              console.log(`Converting image to images array for product ${doc.id}`);
+              processedData.images = [processedData.image];
+            } else {
+              console.log(`No image found for product ${doc.id}, using empty array`);
+              processedData.images = [];
+            }
+          }
+          
           return {
             id: doc.id,
-            ...data
+            ...processedData
           } as Product;
         });
 
